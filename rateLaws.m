@@ -1,11 +1,12 @@
-function rates = rateLaws(...
-    c_ACCOA, c_ADP, c_AKG, c_ALA, c_AMP, c_ARG, c_ASN, c_ASP,...
+function rates = rateLaws(c_ACCOA, c_ADP, c_AKG, c_ALA, c_AMP, c_ARG, c_ASN, c_ASP,...
     c_ATP, c_CIT, c_CYS, c_EGLC, c_EGLN, c_EGLU, c_F6P, c_G6P,...
     c_GAP, c_GLU, c_GLY, c_HIS, c_ILE, c_LAC, c_LEU, c_LYS, c_mAb,...
-    c_MAL, c_MET, c_NAD, c_NADH, c_NADP, c_NADPH, c_NH4, c_OXA,...
+    c_MAL, c_MET, c_NAD, c_NADH, c_NADP, c_NADPH, c_NH4, c_O2, c_OXA,...
     c_PEP, c_PHE, c_PRO, c_PYR, c_R5P, c_SER, c_SUC, c_THR,....
-    c_TYR, c_VAL, c_Cell, c_X5P)
-                                        
+    c_TYR, c_VAL, c_X5P, c_Cell)
+                   
+
+
 parameterDefinitions;
 
 %1
@@ -31,10 +32,10 @@ V_PGK = V_maxPGK * c_GAP/ (K_mG6P+c_GAP) * c_ADP/c_ATP/(K_mADP_ATP+c_ADP/c_ATP) 
         %mmol/1E6 cells/hr
         
 %% 5   MISSING CONSTANT     
-% V_PK = V_maxPK * c_PEP * (1 + beta_F6P * c_F6P/ (alpha_F6P * K_A_F6P)) ...
-%        / (K_mPEP * (1 + c_F6P/K_A_F6P)+c_F6P*(1+c_F6P/K_A_F6P)) ...
-%        * c_ADP/c_ATP /(K_mADP_ATP+c_ADP/c_ATP)*K_dALA/(K_dALA*c_ALA);
-%         %mmol/1E6 cells/hr
+V_PK = V_maxPK * c_PEP * (1 + beta_F6P * c_F6P/ (alpha_F6P * K_A_F6P)) ...
+       / (K_mPEP * (1 + c_F6P/K_A_F6P)+c_F6P*(1+c_F6P/K_A_F6P)) ...
+       * c_ADP/c_ATP /(K_mADP_ATP+c_ADP/c_ATP)*K_dALA/(K_dALA*c_ALA);
+        %mmol/1E6 cells/hr
 % 
 %%
 
@@ -183,7 +184,7 @@ V_KH
 V_PGI
 V_PFK     
 V_PGK
-% V_PK 
+V_PK 
 V_LDH
 V_G6PDH 
 V_EP
@@ -216,5 +217,5 @@ V_mAb];
     
     
     
-     %rates = rateLaws( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+     %rates = rateLaws( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
         

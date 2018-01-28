@@ -1,0 +1,3 @@
+stoich_Matrix =[...
+    
+    ];
