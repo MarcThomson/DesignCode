@@ -45,6 +45,22 @@ V_EP = V_maxEP * c_R5P/(K_mR5P+c_R5P);
  
 V_TK = V_maxTK * c_R5P/(K_mR5P+c_R5P) * c_X5P/(K_mX5P+c_X5P);
     %mmol/1E6 cells/hr
-2+2    
+    
+V_PDH = V_maxPDH * c_PYR/(K_mPYR+c_PYR) * c_NAD/c_NADH/(K_mNAD_NADH+c_NAD/NADH); % EQ 10
+   
+V_CS=V_maxCS * c_OXA/(K_mOXA+c_OXA) * c_ACCOA/(K_mACCOA+c_ACCOA);
+
+%V_ not sure about equation 12
+
+V_AKGDH=V_max_AKGDH * c_AKG/(K_mAKG+c_AKG) * c_NAD/c_NADH/(K_mNAD_NADH+c_NAD/c_NADH)
+
+    
+    
+    
+    
+    
+    
+    
+    
      %rateLaws( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
         
