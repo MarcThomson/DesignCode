@@ -9,34 +9,34 @@ function rates = rateLaws(c_ACCOA, c_ADP, c_AKG, c_ALA, c_AMP, c_ARG, c_ASN, c_A
 parameterDefinitions;
 
 %1
-V_KH = V_maxHK * c_EGLC * (1 + beta_AMP_ATP * c_AMP/c_ATP/(alpha_AMP_ATP*K_A_AMP_ATP)) ...
+V_HK = V_maxHK * c_EGLC * (1 + beta_AMP_ATP * c_AMP/c_ATP/(alpha_AMP_ATP*K_A_AMP_ATP)) ...
      / (K_mEGLC*(1+c_AMP/c_ATP/K_A_AMP_ATP)+c_EGLC * (1 + c_AMP/c_ATP / (alpha_AMP_ATP * K_A_AMP_ATP)))...
-     * c_AMP/c_ATP / (K_mATP_ADP+c_AMP/c_ATP) * c_EGLC/(K_mEGLC + c_EGLC) * K_dG6P/(K_dG6P+c_G6P);
+     * c_ATP/c_ADP / (K_mATP_ADP+c_ATP/c_ADP) * c_EGLC/(K_mEGLC + c_EGLC) * K_dG6P/(K_dG6P+c_G6P);
       %mmol/1E6 cells/hr
-      
+      %Checked 1/28/18 //
 %2      
 V_PGI = V_fmaxPGI * c_G6P/(K_mG6P+c_G6P)* K_dPEP/(K_dPEP+c_PEP) ...
         -V_rmaxPGI*c_F6P/(K_mG6P+c_F6P) ;     
         %mmol/1E6 cells/hr
-        
+      %Checked 1/28/18  
 %3
 V_PFK = V_maxPFK * c_F6P*(1 + beta_AMP_ATP * c_AMP/c_ATP / (alpha_AMP_ATP*K_A_AMP_ATP)) ...
         / (K_mF6P * (1 + c_AMP/c_ATP / (K_A_AMP_ATP)) + c_F6P * (1+c_AMP/c_ATP /(alpha_AMP_ATP*K_A_AMP_ATP))) ...
-        * c_AMP/c_ATP / (K_mATP_ADP+c_AMP/c_ATP ) * K_dLAC/(K_dLAC+c_LAC);
+        * c_ATP/c_ADP / (K_mATP_ADP+c_ATP/c_ADP ) * K_dLAC/(K_dLAC+c_LAC);
         %mmol/1E6 cells/hr
-        
+      %Checked 1/28/18
 %4        
 V_PGK = V_maxPGK * c_GAP/ (K_mG6P+c_GAP) * c_ADP/c_ATP/(K_mADP_ATP+c_ADP/c_ATP) ... 
         * c_NAD/c_NADH / (K_mNAD_NADH+c_NAD/c_NADH); 
         %mmol/1E6 cells/hr
+      %Checked 1/28/18
         
-%% 5   MISSING CONSTANT     
+%% 5   MISSING CONSTANT  K_dALA    
 V_PK = V_maxPK * c_PEP * (1 + beta_F6P * c_F6P/ (alpha_F6P * K_A_F6P)) ...
        / (K_mPEP * (1 + c_F6P/K_A_F6P)+c_F6P*(1+c_F6P/K_A_F6P)) ...
        * c_ADP/c_ATP /(K_mADP_ATP+c_ADP/c_ATP)*K_dALA/(K_dALA*c_ALA);
 %   mmol/1E6 cells/hr
-% 
-%%
+%     %Checked 1/28/18
 
 %6
 V_LDH = V_fmaxLDH* c_PYR*(1+beta_AMP_ATP*c_AMP/c_ATP/(alpha_AMP_ATP*K_A_AMP_ATP))...
@@ -45,6 +45,7 @@ V_LDH = V_fmaxLDH* c_PYR*(1+beta_AMP_ATP*c_AMP/c_ATP/(alpha_AMP_ATP*K_A_AMP_ATP)
      -V_rmaxLDH * c_LAC/(K_mLAC+c_LAC)*c_NAD/c_NADH/(K_mNAD_NADH+c_NAD/c_NADH)...
      *K_dPYR/(K_dPYR+c_PYR);
      %mmol/1E6 cells/hr
+    %Checked 1/28/18
 
 %7
 V_G6PDH = V_maxG6PDH * c_G6P/(K_mG6P+c_G6P) * c_NADP/c_NADPH/ (K_mNADP_NADPH+c_NADP/c_NADPH);
@@ -179,7 +180,7 @@ V_mAb = V_maxmAb * c_LYS/(K_mLYS_mAb+c_LYS) * c_ILE/(K_mILE_mAb+c_ILE) ...
 %	mmol/1E6 cells/hr
     
     rates = [
-V_KH   
+V_HK   
 V_PGI
 V_PFK     
 V_PGK
