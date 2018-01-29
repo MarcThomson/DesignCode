@@ -31,7 +31,7 @@ extraCellular = [...
 0 % c_NADP_0  mmol/(10^6 cell) 
 0 % c_NADPH_0 mmol/(10^6 cell) 
 1 % c_NH4_0   mM
-1 % c_O2      mM
+0 % c_O2      mmol/(10^6 cell) 
 0 % c_OXA_0   mmol/(10^6 cell) 
 0 % c_PEP_0   mmol/(10^6 cell) 
 1 % c_PHE_0   mM

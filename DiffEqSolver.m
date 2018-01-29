@@ -5,7 +5,7 @@ parameterDefinitions;
 
 tspan = [1 24*7];
 
-[t,y] = ode23s(@dydt,tspan,y0);
+[t,y] = ode45(@dydt,tspan,y0);
 
 function derivative_system = dydt(t,y)
     V = 12000*1000; %mL
