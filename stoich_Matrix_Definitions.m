@@ -1,3 +1,0 @@
-stoich_Matrix =[...
-    
-    ];
