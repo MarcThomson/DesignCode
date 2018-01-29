@@ -6,7 +6,6 @@ function rates = rateLaws(c_ACCOA, c_ADP, c_AKG, c_ALA, c_AMP, c_ARG, c_ASN, c_A
     c_TYR, c_VAL, c_X5P, c_Cell)
                    
 
-%test
 parameterDefinitions;
 
 %1
