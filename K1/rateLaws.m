@@ -43,7 +43,7 @@ end
 % 8 %nmol/(10^6 cells)/day
 V8 = (v_max8f/TC_8b*(c_GLN_ext/Km_8a)-v_max8r*(c_GLU_ext/Km_8b)*(c_NH3_ext/Km_8c))... 
 /(1+(c_GLN_ext/Km_8a)+(c_GLU_ext/Km_8b)+(c_NH3_ext/Km_8c)+(c_GLU_ext/Km_8b)*(c_NH3_ext/Km_8c));
-% CHECKED BY:
+% CHECKED BY: ed and marc
 % DATE:
 
 % 10 %nmol/(10^6 cells)/day
