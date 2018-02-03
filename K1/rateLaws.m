@@ -23,37 +23,37 @@ V1 = v_max1f/TC1b*c_GLC;
 if  R>=1
 V2 = (R-1)v_max2;  
 else
-V2=(R-1)*v_max2*(c_LAC/K_m1)/(1+c_LAC/K_m2);
+V2=(R-1)*v_max2*(c_LAC/Km_1)/(1+c_LAC/Km_2);
 end
 % CHECKED BY:
 % DATE:
 
 % 3 %nmol/(10^6 cells)/day
 if R>=1 
-V3=(v_max3f/TC_3b*(c_GLC/Km_3c)-v_max3r*TC_3b*c_ALA/K_m3b))...
-/(1+(c_GLC/K_m3c)+(c_ALA)/K_m3b));
+V3=(v_max3f/TC_3b*(c_GLC/Km_3c)-v_max3r*TC_3b*c_ALA/Km_3b))...
+/(1+(c_GLC/Km_3c)+(c_ALA)/Km_3b));
 else 
-V3=(v_max3f*(c_LAC/K_m3a)-v_max3r*(c_ALA/K_m3b))...
-/(1+(c_LAC/K_m3a)+(c_ALA/K_m3b)); 
+V3=(v_max3f*(c_LAC/Km_3a)-v_max3r*(c_ALA/Km_3b))...
+/(1+(c_LAC/Km_3a)+(c_ALA/Km_3b)); 
 end
 % CHECKED BY:
 % DATE:
 
 % 8 %nmol/(10^6 cells)/day
-V8 = (v_max8f/TC_8*(c_GLN/K_m8a)-v_max8r*(c_GLU/K_m8b)*(c_NH3/K_m8c))... 
-/(1+(c_GLN/K_m8a)+(c_GLU/K_m8b)+(c_NH3/K_m8c)+(c_GLU/K_m8b)*(c_NH3/K_m8c);
+V8 = (v_max8f/TC_8*(c_GLN/Km_8a)-v_max8r*(c_GLU/Km_8b)*(c_NH3/Km_8c))... 
+/(1+(c_GLN/Km_8a)+(c_GLU/Km_8b)+(c_NH3/Km_8c)+(c_GLU/Km_8b)*(c_NH3/Km_8c);
 % CHECKED BY:
 % DATE:
 
 % 9 %nmol/(10^6 cells)/day
-V9 = (v_max9f*v_3(c_NH3/K_m9)-v_max9r*v_11)...
-/(1+(c_NH3/K_m9)); 
+V9 = (v_max9f*v_3(c_NH3/Km_9)-v_max9r*v_11)...
+/(1+(c_NH3/Km_9)); 
 % CHECKED BY:
 % DATE:
 
 % 10 %nmol/(10^6 cells)/day
-V10 = (v_max10f/TC_10*(c_ASN/k_m10a)-v_max10r/TC_10*(c_ASP/K_m10b)*(c_NH3/K_m10c)...
-/(1+(c_ASN/K_m10a)+(c_ASP/K_m10b)+(c_NH3/K_m10c)+(c_ASP/K_m10b)*(c_NH3/K_m10c)); 
+V10 = (v_max10f/TC_10*(c_ASN/km_10a)-v_max10r/TC_10*(c_ASP/Km_10b)*(c_NH3/Km_10c)...
+/(1+(c_ASN/Km_10a)+(c_ASP/Km_10b)+(c_NH3/Km_10c)+(c_ASP/Km_10b)*(c_NH3/Km_10c)); 
 % CHECKED BY:
 % DATE:
 
@@ -63,8 +63,8 @@ V11 = v_max11*v_10;
 % DATE:
 
 % 12 %nmol/(10^6 cells)/day
-V12 = (v_max12f*v_16*(c_SER/K_m12a)-v_max12r*(c_GLY/K_m12b)^2)...
-/(1+(c_SER/K_m12a)+(c_GLY/K_m12b)+(c_GLY/k_m12b)^2; 
+V12 = (v_max12f*v_16*(c_SER/Km_12a)-v_max12r*(c_GLY/Km_12b)^2)...
+/(1+(c_SER/Km_12a)+(c_GLY/Km_12b)+(c_GLY/Km_12b)^2; 
 % CHECKED BY:
 % DATE:
 
@@ -76,18 +76,18 @@ r=1
 else
 error(Non-boolean shift)
 end
-V13 = r*v_max13*(C-C)/K_m13...
-/(1+(C-C)/K_m13);               % WHAT IS GOING ON HERE
+V13 = r*v_max13*(C-C)/Km_13...
+/(1+(C-C)/Km_13);               % WHAT IS GOING ON HERE
 % CHECKED BY:
 % DATE:
 
 % 16 %nmol/(10^6 cells)/day
 if shift == 0 
-V16 = v_max16/TC_16*(c_GLN/K_m16a)*(c_ASN/K_m16b)...
-/(1+(c_GLN/K_m16)+(c_ASN/K_m16b)+(c_GLN/K_m16a)*(c_ASN/K_m16b);
+V16 = v_max16/TC_16*(c_GLN/Km_16a)*(c_ASN/Km_16b)...
+/(1+(c_GLN/Km_16)+(c_ASN/Km_16b)+(c_GLN/Km_16a)*(c_ASN/Km_16b);
 elseif shift==1
-V16 = v_max16/TC_16*(c_ASN/K_m16b)*(c_GLC/K_m16c)...
-/(1+(c_ASN/K_m16b)+(c_GLC/K_m16c)+(c_ASN/K_m16b)*(c_GLC/K_m16c);
+V16 = v_max16/TC_16*(c_ASN/Km_16b)*(c_GLC/Km_16c)...
+/(1+(c_ASN/Km_16b)+(c_GLC/Km_16c)+(c_ASN/Km_16b)*(c_GLC/Km_16c);
 else
 error(Non-boolean shift)
 end
@@ -95,13 +95,13 @@ end
 % DATE:
 
 % 17 %nmol/(10^6 cells)/day
-V17 = v_max17/(1+(c_LAC/K_i17)^exp_17); 
+V17 = v_max17/(1+(c_LAC/Ki_17)^exp_17); 
 % CHECKED BY:
 % DATE:
 
 % 33 %nmol/(10^6 cells)/day
-V33 = TC_33*v_max33*(c_GLN/K_m33a)...
-/(1+(c_GLN/K_m33a)+0.01*v_16-0.05*v_17; 
+V33 = TC_33*v_max33*(c_GLN/Km_33a)...
+/(1+(c_GLN/Km_33a)+0.01*v_16-0.05*v_17; 
 % CHECKED BY:
 % DATE:
 
