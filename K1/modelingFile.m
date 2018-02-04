@@ -22,8 +22,8 @@ VCD = @(t1)(1-1./(1+exp(-0.5*(t1-9))));
 %tol = 1e-10;
 %options = optimoptions('fmincon','ConstraintTolerance',tol,'StepTolerance',tol,'OptimalityTolerance',tol);
 tol = 1e-10;
-options = optimoptions('fmincon','ConstraintTolerance',tol,'OptimalityTolerance',tol,'MaxFunctionEvaluations',30000,'display','off','Algorithm','sqp');
-
+options = optimoptions('fmincon','ConstraintTolerance',tol,'OptimalityTolerance',tol,'MaxFunctionEvaluations',30000,'Algorithm','sqp','StepTolerance',1e-15);
+%,'display','off'
 
 steps = length(t)-1;
 numRxns=length(stoichMatrix(1,:));
@@ -49,19 +49,24 @@ for i=1:length(t)-1
     %% Nonlinear Optimization Initialization
     I = find(rates);
     Aeq = stoichMatrix;
-    beq = zeros(numComponents,1);
     I_external=find(1-internal);       % We are only assuming pseudosteady-state for intracellular components.
     
-    for j=1:length(I_external)
-        Aeq(I_external(j),:) = 0;
+    for j=flip(1:length(I_external))
+        %Aeq(I_external(j),:) = 0;
+        Aeq=[Aeq(1:I_external(j)-1,:);Aeq(I_external(j)+1:end,:)];
     end
+    beq = zeros(length(Aeq(:,1)),1);
     
     A = zeros(length(x0),length(x0));
-    for j=1:length(x0)
-        A(j,j) = reversible(j)-1;
+    for j=flip(1:length(x0))
+        if reversible(j)==1
+            A=[A(1:j-1,:);A(j+1:end,:)];
+        else
+            A(j,j) = -1;
+        end
     end
     
-    b = reversible;
+    b = zeros(length(A(:,1)),1);
     
     % Nonlinear Optimization Execution
     f_obj=@(x) sum( ((x(I)-x0(I))./(x0(I))).^2);
@@ -83,3 +88,7 @@ for i=1:length(t)-1
     end
     
 end
+
+
+% load gong
+% sound(y,Fs)
