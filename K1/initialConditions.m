@@ -10,7 +10,7 @@ c_ASN_int_0     =    0;    %  mM
 c_ASP_ext_0     =   2;    %  mM
 c_ASP_int_0     =    0;    %  mM
 c_ATP_0         =    0;    %  mM
-c_BIOM_ext_0    =    5.4*2.3;    %  mM RELATED TO VCD
+c_BIOM_ext_0    =   5;    %  mM RELATED TO VCD % 5.4*2.3 is probably what to use
 c_BIOM_int_0    = 0;    %  mM
 c_C_C_ext_0     = 1.5;    %  mM
 c_C_C_int_0     =    0;    %  mM
@@ -40,7 +40,7 @@ c_PYR_0         =    0;    %  mM
 c_SER_ext_0     =  11;    %  mM
 c_SER_int_0     =   0;    %  mM
 shift_0         =   0;    %
-R_0             =   10;    %units
+R_0             =   6.2;    %units
 
 initialConditions_vec = [c_AKG_0, c_ALA_ext_0, c_ALA_int_0, c_ANTI_ext_0,...
     c_ANTI_int_0, c_ASN_ext_0, c_ASN_int_0, c_ASP_ext_0, c_ASP_int_0,...
