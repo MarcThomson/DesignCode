@@ -34,6 +34,7 @@ C = zeros(numComponents+2,length(t)); % Adds R and shift
 C(:,1) = initialConditions_vec;
 maxIndex=zeros(12,1);
 objectives=zeros(steps,1);
+exitFlagVec=zeros(steps,1);
 %%
 
 for i=1:length(t)-1
@@ -47,6 +48,9 @@ for i=1:length(t)-1
     rates = rateLaws(inputs{:});
     x0 = rates;
     %% Nonlinear Optimization Initialization
+    
+    
+    
     I = find(rates);
     Aeq = stoichMatrix;
     I_external=find(1-internal);       % We are only assuming pseudosteady-state for intracellular components.
@@ -68,12 +72,52 @@ for i=1:length(t)-1
     
     b = zeros(length(A(:,1)),1);
     
+
+I = find(rates);
+    Aeq = stoichMatrix;
+    I_external=find(1-internal);       % We are only assuming pseudosteady-state for intracellular components.
+
+    for j=flip(1:length(I_external))
+        %Aeq(I_external(j),:) = 0;
+        Aeq=[Aeq(1:I_external(j)-1,:);Aeq(I_external(j)+1:end,:)];
+    end
+    beq = zeros(length(Aeq(:,1)),1);
+
+    A = zeros(length(x0),length(x0));
+    for j=flip(1:length(x0))
+        if reversible(j)==1
+            A=[A(1:j-1,:);A(j+1:end,:)];
+        else
+            A(j,j) = -1;
+        end
+    end
+
+    b = zeros(length(A(:,1)),1);
+    
+    
+    
+    
+    
     % Nonlinear Optimization Execution
-    f_obj=@(x) sum( ((x(I)-x0(I))./(x0(I))).^2);
+   
+    
+    
+H = zeros(length(x0),length(x0));
+f = zeros(length(x0),1);    
+for j = 1:length(I)
+       H(I(j),I(j)) = 2/x0(I(j))^2;
+       f(I(j)) = -2/x0(I(j)); 
+end
+
+[v(:,i), objectives(i), exitFlagVec(i)] =quadprog(H,f,A,b,Aeq,beq)    ;
+    
+    %f_obj=@(x) sum( ((x(I)-x0(I))./(x0(I))).^2);
+     options = optimoptions('quadprog','OptimalityTolerance',tol,'MaxIterations',30000,'Algorithm','interior-point-convex','StepTolerance',1e-12);
+    
     %options = optimoptions('fmincon','MaxFunctionEvaluations',30000);
-    v(:,i) = fmincon(f_obj,x0,A,b,Aeq,beq,[],[],[],options);
+    % v(:,i) = fmincon(f_obj,x0,A,b,Aeq,beq,[],[],[],options);
     R = (2*v(1,i)+0.64*v(16,i))/v(34,i);
-    objectives(i)=f_obj(v(:,i));
+    % objectives(i)=f_obj(v(:,i)); %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % f_obj_2=@(x)max( ((x(I)-x0(I))./(x0(I))).^2);
     % [objectives(i),maxIndex(i)]=f_obj_2(v(:,i));
     % Update Solution Matrix
@@ -89,6 +133,14 @@ for i=1:length(t)-1
     
 end
 
+<<<<<<< HEAD
 
 % load gong
 % sound(y,Fs)
+=======
+% exitFlagVec
+    % 
+
+
+
+>>>>>>> a1ac2419ca80400c1dcbb354131223b712e91601
