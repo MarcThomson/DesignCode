@@ -1,7 +1,8 @@
 clear;close all;
 %% Inputs %%
-
-tend = 30;
+K = 0.10;
+tau = 1; %Defined twice!
+tend = 40;
 %% Load variables from definitions
 reversibleLogicals;
 internalLogicals;
@@ -11,11 +12,11 @@ perfusionInitialConditions;
 load('stoichMatrix.mat')
 tspan = [0 tend];
 
-[t, Ceq] = ode45(@dCdt,tspan,C0);
+[t, C] = ode45(@dCdt,tspan,C0);
 
 function derivativeSystem = dCdt(t,C)
     tau = 1;
-    K = 0.1;
+    K = 0.10;
     
     reversibleLogicals;
     internalLogicals;

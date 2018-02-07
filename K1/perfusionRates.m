@@ -3,7 +3,7 @@ function componentRates = perfusionRates(C)
 cellType = 1;
 Rguess = 6.2;
 shift = 0;
-R_tol = 0.01;
+R_tol = 0.001;
 VCD = 0.8;
 
 %% Call other parameters
@@ -77,7 +77,7 @@ while abs((Rnew-Rold)/Rold) > R_tol
     Rnew = (2*v(1)+0.64*v(16))/v(34);
 end
     
-componentRates = stoichMatrix*v  * (C_new(11)*VCD/2.31)/1000; 
+componentRates = stoichMatrix*v  * (C_new(11)*VCD/2.31)   /1000; 
 
 componentRates = componentRates(I_external);
 end

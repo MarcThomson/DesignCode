@@ -108,11 +108,11 @@ for j = 1:length(I)
        H(I(j),I(j)) = 2/x0(I(j))^2;
        f(I(j)) = -2/x0(I(j)); 
 end
-
-[v(:,i), objectives(i), exitFlagVec(i)] =quadprog(H,f,A,b,Aeq,beq)    ;
+options = optimoptions('quadprog','OptimalityTolerance',tol,'MaxIterations',30000,'Algorithm','interior-point-convex','StepTolerance',1e-12,'Display','off');
+[v(:,i), objectives(i), exitFlagVec(i)] =quadprog(H,f,A,b,Aeq,beq,[],[],[],options)    ;
     
     %f_obj=@(x) sum( ((x(I)-x0(I))./(x0(I))).^2);
-     options = optimoptions('quadprog','OptimalityTolerance',tol,'MaxIterations',30000,'Algorithm','interior-point-convex','StepTolerance',1e-12);
+     
     
     %options = optimoptions('fmincon','MaxFunctionEvaluations',30000);
     % v(:,i) = fmincon(f_obj,x0,A,b,Aeq,beq,[],[],[],options);
@@ -122,7 +122,7 @@ end
     % [objectives(i),maxIndex(i)]=f_obj_2(v(:,i));
     % Update Solution Matrix
     C(1:end-2,i+1) =  C(1:end-2,i) +  (stoichMatrix*v(:,i))*dt* VCD(t(i))/2.3*C(11,i)/1000; % Updating cell density
-    C(34,i+1) = C(34,i);
+    %C(34,i+1) = C(34,i);
     C(end-1,i+1) = C(end-1,i);
     C(end, i+1) = R;
     
@@ -133,14 +133,4 @@ end
     
 end
 
-<<<<<<< HEAD
 
-% load gong
-% sound(y,Fs)
-=======
-% exitFlagVec
-    % 
-
-
-
->>>>>>> a1ac2419ca80400c1dcbb354131223b712e91601
