@@ -3,7 +3,7 @@
 %% Inputs %%
 clear all;close all;
 cellType = 1;   % Type 1=A, 0=B
-dt = 0.25;      % days
+dt = 0.1;      % days
 tend = 10;      % days
 shiftDay=4;     % days
 
@@ -131,6 +131,10 @@ options = optimoptions('quadprog','OptimalityTolerance',tol,'MaxIterations',3000
         C(end-1,i+1)=1;
     end
     
+    % Feed the bugs!
+    if t(i)-floor(t(i))==0 && C(20,i)<=40
+        C(20,i+1)=C(20,i)+6;
+    end
+    
+    
 end
-
-
