@@ -3,9 +3,9 @@
 %% Inputs %%
 clear all;close all;
 cellType = 1;   % Type 1=A, 0=B
-dt = 0.1;      % days
-tend = 10;      % days
-shiftDay=4;     % days
+dt = 0.25;      % days
+tend = 30;      % days
+shiftDay=20;     % days
 
 %% Load variables from definitions
 parameterDefinitions;
@@ -117,6 +117,7 @@ options = optimoptions('quadprog','OptimalityTolerance',tol,'MaxIterations',3000
     %options = optimoptions('fmincon','MaxFunctionEvaluations',30000);
     % v(:,i) = fmincon(f_obj,x0,A,b,Aeq,beq,[],[],[],options);
     R = (2*v(1,i)+0.64*v(16,i))/v(34,i);
+     
     % objectives(i)=f_obj(v(:,i)); %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % f_obj_2=@(x)max( ((x(I)-x0(I))./(x0(I))).^2);
     % [objectives(i),maxIndex(i)]=f_obj_2(v(:,i));
@@ -133,7 +134,7 @@ options = optimoptions('quadprog','OptimalityTolerance',tol,'MaxIterations',3000
     
     % Feed the bugs!
     if t(i)-floor(t(i))==0 && C(20,i)<=40
-        C(20,i+1)=C(20,i)+6;
+        C(20,i+1)=C(20,i)+3.5;
     end
     
     

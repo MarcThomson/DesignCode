@@ -12,7 +12,7 @@ parameterDefinitions;
 % Marc Thomson
 % William Cordell
 % Rate laws provided by: Lee et al. 2012
-
+q=1.05;
  if shift==1
     TC_1=TC_1b;
     TC_3=TC_3b;
@@ -22,13 +22,13 @@ parameterDefinitions;
     exp_17=exp_17b;
     exp_1=exp_1b;
  else
-   TC_1=1;
-   TC_3=1;
-   TC_8=1;
-   TC_10=1;
-   TC_16=1;
-   exp_17=exp_17a;
-   exp_1=exp_1a;
+   TC_1=q*TC_1b;
+    TC_3=q*TC_3b;
+    TC_8=q*TC_8b;
+    TC_10=q*TC_10b;
+    TC_16=q*TC_16b;
+    exp_17=q*exp_17b;
+    exp_1=q*exp_1b;
 end
 
 
@@ -92,8 +92,6 @@ if shift==0                     % MUST DEFINE SHIFT BOOLEAN
     r = R;                % This could probably be initialized as R and this simplified
 elseif shift ==1 
     r = 1;
-else
-    'error(Non-boolean shift)'
 end
 V13 = r*v_max13*(c_C_C_ext)/Km_13...
 /(1+(c_C_C_ext)/Km_13);               % WHAT IS GOING ON HERE
