@@ -3,9 +3,9 @@ if cellType == 1 %type A
     v_max1f     =     	3800;	%	nmol/ (10^6 cells)/day
     Ki_1        =     	20	;	%	mM
     Km_1        =     	10	;	%	mM
-    exp_1       =       1   ;   %   Unitless
-    %exp_1a     	=     	3	;	%	Unitless
-    %exp_1b     	=     	1	;	%	Unitless
+    %exp_1       =       1   ;   %   Unitless
+    exp_1a     	=     	3	;	%	Unitless
+    exp_1b     	=     	1	;	%	Unitless
     TC_1b     	=     	5	;	%	Unitless
     v_max2     	=     	2200;	%	nmol/ (10^6 cells)/day
     Km_2        =     	6	;	%	mM
@@ -44,9 +44,9 @@ if cellType == 1 %type A
     TC_16b     	=     	3	;	%	Unitless
     v_max17     =     	525	;	%	nmol/ (10^6 cells)/day
     Ki_17     	=     	30	;	%	mM
-    exp_17      =     	1	;	%	Unitless
-    %exp_17a     =     	0.5	;	%	Unitless
-    %exp_17b     =     	1	;	%	Unitless
+    %exp_17      =     	1	;	%	Unitless
+    exp_17a     =     	0.5	;	%	Unitless
+    exp_17b     =     	1	;	%	Unitless
     v_max33a    =     	0.2	;	%	nmol/ (10^6 cells)/day
     v_max33b    =     	0.2	;	%	nmol/ (10^6 cells)/day
 
