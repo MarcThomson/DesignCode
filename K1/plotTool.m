@@ -10,6 +10,7 @@ L = [11,4,20,27,2,6,8,13,21,25,38,32,23,41];
       plot(t,C(L(j),:));
       title(Titles(j))
       xlim([0,tend]);
+      ylim([0,inf]);
     end
     
   pVCD=VCD(t);
