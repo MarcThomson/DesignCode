@@ -1,13 +1,14 @@
 clear;close all;
 critDensity = 10; % VCD, 10^6 cell/mL
-vesselSize=[10,50,250,1E3,20E3,80E3,400E3,2000E3]; %mL
-vessel = 1; %inital vessel
+%vesselSize=[10,50,250,1E3,20E3,80E3,400E3,2000E3]; %mL
+vesselSize =  logspace(1,log(2000E3)/log(10),15);%[10,57.1860367967821,327.024280452292,1870.12225353860,10694.4880005339,61157.5384321278,349735.724318027,2000000.00000000]; %mL
+vessel = 8; %inital vessel
 
     
 %% Inputs %%
 cellType = 1;                                                              % Cells of Type 1=A and 0=B can be selected.
-dt = 0.25;                                                                 % days. Timestep for iteration.
-tend = 12;                                                                 % days. Total days for calculation.
+dt = 0.1;                                                                 % days. Timestep for iteration.
+tend = 10;                                                                 % days. Total days for calculation.
 shiftDay=0;                                                                % days. The day of the temperature shift where the temperature is slightly raised.
 
 
@@ -26,13 +27,20 @@ numRxns=length(stoichMatrix(1,:));                                         % Tot
 numComponents = length(stoichMatrix(:,1));                                 % Total number of components.
 
 C = zeros(numComponents+2,length(t));                                      % Adds R and shift
-%initialConditions_vec(11)=(5*1.2/10);                                      % Defining the time interval for iteration
+initialConditions_vec2 = initialConditions_vec;
+initialConditions_vec2(11)=4.5/vesselSize(1)*25*2.31*0.8;                                      % Defining the time interval for iteration
 for vessel=1:length(vesselSize)
-    t = 0:dt:tend;
+t = 0:dt:tend;
 if vessel>1
+       initialConditions_vec(11) = 0;
        Cold = totalStructure(vessel-1);
-       initialConditions_vec =   (Cold(:,end) * vesselSize(vessel-1) + initialConditions_vec *...
+       told = totalStructure(-(vessel-1));
+       initialConditions_vec2 =   (Cold(:,end) * vesselSize(vessel-1) + initialConditions_vec *...
                             (vesselSize(vessel) - vesselSize(vessel-1))) / vesselSize(vessel);
+       initialConditions_vec2(11) = VCD(told(end))*initialConditions_vec2(11);
+       
+       initialConditions_vec2(end-1:end) =  Cold(end-1:end,end);
+       
 end
 %% Optimization Settings
 
@@ -44,7 +52,7 @@ tol = 1e-10;                                                               % Tol
 
 v = zeros(numRxns,length(t)-1);                                            % Initializes the rates of each reaction for each timestep.
 
-C(:,1) = initialConditions_vec;                                            % Adds initial conditions to the first column of the solution matrix.
+C(:,1) = initialConditions_vec2;                                            % Adds initial conditions to the first column of the solution matrix.
 objectives=zeros(steps,1);                                                 % Initializes objectives. These are minimized in the nonlinear optimization.
 exitFlagVec=zeros(steps,1);                                                % Initialilzes exitflags. These signify if the optimization ran into an error.
 
@@ -56,7 +64,7 @@ i = 1;
 while pVCD(i,vessel) < critDensity
    
     if i==1                                                                % Load inputs
-        y = [initialConditions_vec; cellType];                             % If it is the first step, inputs are loaded from the initial conditions and respective celltype.
+        y = [initialConditions_vec2; cellType];                             % If it is the first step, inputs are loaded from the initial conditions and respective celltype.
     else
         y = [C(:,i); cellType];                                            % If it is any other step, inputs are loaded from the previous step.
     end
@@ -110,17 +118,20 @@ while pVCD(i,vessel) < critDensity
     
     
     % Glucose monitoring 
-    if i<25
+    
     if t(i)-floor(t(i))==0 && C(20,i)<=40                                % If the sugar concentration drops below the threshold of 40, more sugar is added. 
         C(20,i+1)=C(20,i)+5;
     end
-    end
+    
     pVCD(i,vessel)=VCD(t(i))*C(11,i)/2.31;
     
-    if pVCD(i,vessel) > critDensity
+    if pVCD(i,vessel) > critDensity && vessel~=length(vesselSize)
        totalStructure(vessel)=C(:,1:i+1);
        totalStructure(-vessel)=t(1:i+1);
-       
+       break
+    elseif t(i+1)==tend
+       totalStructure(vessel)=C(:,1:i+1);
+       totalStructure(-vessel)=t(1:i+1);
        %vessel=vessel+1; 
        break
     end
