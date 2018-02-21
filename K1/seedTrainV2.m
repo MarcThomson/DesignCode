@@ -26,13 +26,13 @@ numRxns=length(stoichMatrix(1,:));                                         % Tot
 numComponents = length(stoichMatrix(:,1));                                 % Total number of components.
 
 C = zeros(numComponents+2,length(t));                                      % Adds R and shift
-initialConditions_vec(11)=(5*1.2/10);                                      % Defining the time interval for iteration
-for k=1:length(vesselSize)
+%initialConditions_vec(11)=(5*1.2/10);                                      % Defining the time interval for iteration
+for vessel=1:length(vesselSize)
     t = 0:dt:tend;
 if vessel>1
        Cold = totalStructure(vessel-1);
-       initialConditions_vec =   (Cold(:,end) * vesselSize(k-1) + initialConditions_vec *...
-                            (vesselSize(k) - vesselSize(k-1))) / vesselSize(k);
+       initialConditions_vec =   (Cold(:,end) * vesselSize(vessel-1) + initialConditions_vec *...
+                            (vesselSize(vessel) - vesselSize(vessel-1))) / vesselSize(vessel);
 end
 %% Optimization Settings
 
@@ -53,7 +53,7 @@ exitFlagVec=zeros(steps,1);                                                % Ini
 pVCD = zeros(length(t),length(vesselSize)); %???
 i = 1;
 %% Begin Iteration
-while pVCD(i) < critDensity
+while pVCD(i,vessel) < critDensity
    
     if i==1                                                                % Load inputs
         y = [initialConditions_vec; cellType];                             % If it is the first step, inputs are loaded from the initial conditions and respective celltype.
@@ -103,7 +103,7 @@ while pVCD(i) < critDensity
     
     R = (2*v(1,i)+0.64*v(16,i))/v(34,i);                                   % Define the R term in terms of current rates
     C(1:end-2,i+1) =  C(1:end-2,i) +  ...                                  % Updating cell density
-    (stoichMatrix*v(:,i))*dt* VCD(t(k))/2.3*C(11,i)/1000;                  % 
+    (stoichMatrix*v(:,i))*dt* VCD(t(vessel))/2.3*C(11,i)/1000;                  % 
     C(end-1,i+1) = C(end-1,i);
     C(end, i+1) = R;                                                       % Store R in solution matrix
 
@@ -115,13 +115,13 @@ while pVCD(i) < critDensity
         C(20,i+1)=C(20,i)+5;
     end
     end
-    pVCD(i,k)=VCD(t(i))*C(11,i)/2.31;
+    pVCD(i,vessel)=VCD(t(i))*C(11,i)/2.31;
     
-    if pVCD(i,k) > critDensity
-       totalStructure(k)=C(:,1:i+1);
-       totalStructure(-k)=t(1:i+1);
+    if pVCD(i,vessel) > critDensity
+       totalStructure(vessel)=C(:,1:i+1);
+       totalStructure(-vessel)=t(1:i+1);
        
-       vessel=vessel+1; 
+       %vessel=vessel+1; 
        break
     end
     i = i + 1;
