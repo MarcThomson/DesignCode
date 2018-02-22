@@ -12,7 +12,7 @@ parameterDefinitions;
 % Marc Thomson
 % William Cordell
 % Rate laws provided by: Lee et al. 2012
-%q=1;
+q=0.8;
  if shift==1
     TC_1=TC_1b;
     TC_3=TC_3b;
@@ -22,11 +22,11 @@ parameterDefinitions;
     exp_17=exp_17b;
     exp_1=exp_1b;
  else
-   TC_1=1;%q*TC_1b;
-    TC_3=1;%q*TC_3b;
-    TC_8=1;%q*TC_8b;
-    TC_10=1;%q*TC_10b;
-    TC_16=1;%q*TC_16b;
+   TC_1=TC_1b;
+    TC_3=TC_3b;
+    TC_8=q*TC_8b;
+    TC_10=q*TC_10b;
+    TC_16=q*TC_16b;
     exp_17 =  exp_17a;
     exp_1 = exp_1a;
 end
@@ -49,16 +49,18 @@ end
 
 % 3 %nmol/(10^6 cells)/day
 if R>=1 %%%%%%%%%%% 
-    V3 = (v_max3f*(c_GLC_ext/Km_3c)-v_max3r*c_ALA_ext/Km_3b)...
-    /(1+(c_GLC_ext/Km_3c)+(c_ALA_ext/Km_3b));
+   V3 = (v_max3f*(c_GLC_ext/Km_3c)-v_max3r*c_ALA_ext/Km_3b)...
+   /(1+(c_GLC_ext/Km_3c)+(c_ALA_ext/Km_3b));
+%     V3 = (v_max3f*(c_GLC_ext/Km_3c)/TC_3b-v_max3r*TC_3b*c_ALA_ext/Km_3b)...
+%    /(1+(c_GLC_ext/Km_3c)+(c_ALA_ext/Km_3b));
 else 
     V3 = (v_max3f*(c_LAC_ext/Km_3a)-v_max3r*(c_ALA_ext/Km_3b))...
     /(1+(c_LAC_ext/Km_3a)+(c_ALA_ext/Km_3b)); 
 end
 
 if V3<0
-   V3=v_max3r/TC_3*(c_ALA_ext/Km_3b)...
-      /(1+(c_ALA_ext/Km_3b));    
+  V3=v_max3r/TC_3*(c_ALA_ext/Km_3b)...
+     /(1+(c_ALA_ext/Km_3b));    
 end
 
 % CHECKED BY: M&E
@@ -124,7 +126,8 @@ V17 = v_max17/(1+(c_LAC_ext/Ki_17)^exp_17);
 % DATE:
 
 % 33 %nmol/(10^6 cells)/day
-V33 = v_max33a*V8+v_max33b*V11;
+V33 = v_max33a*V8 + v_max33b*V11;
+%V33 = v_max33*(c_GLN_ext/K_m33a)/(1+c_GLN_ext/K_m33a) + 0.01 *V16-0.05*V17;
 % CHECKED BY: M&E
 % DATE:
 

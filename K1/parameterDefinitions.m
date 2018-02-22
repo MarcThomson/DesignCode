@@ -49,7 +49,8 @@ if cellType == 1 %type A
     exp_17b     =     	1	;	%	Unitless
     v_max33a    =     	0.2	;	%	nmol/ (10^6 cells)/day
     v_max33b    =     	0.2	;	%	nmol/ (10^6 cells)/day
-
+    %v_max33     =       310;
+    %K_m33a      =       4;
 
 
 elseif cellType == 0 %B
@@ -98,7 +99,8 @@ elseif cellType == 0 %B
     Ki_17     	=     	50	;	%	mM
     exp_17a     =     	0.9	;	%	Unitless
     exp_17b     =     	0.4	;	%	Unitless
-    v_max33a    =     	0.1	;	%	nmol/ (10^6 cells)/day
-    v_max33b    =     	0.2	;	%	nmol/ (10^6 cells)/day
+
+    %v_max33a    =     	0.1	;	%	nmol/ (10^6 cells)/day
+    %v_max33b    =     	0.2	;	%	nmol/ (10^6 cells)/day
 end
 

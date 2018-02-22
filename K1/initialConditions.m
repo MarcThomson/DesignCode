@@ -5,7 +5,7 @@ c_ALA_ext_0     = 0.9;    %  mM  =  2
 c_ALA_int_0     =    0;    %  mM  =  3
 c_ANTI_ext_0    =   0;    %  mM  =  4
 c_ANTI_int_0    =   0;    %  mM  =  5
-c_ASN_ext_0     =  21;    %  mM  =  6
+c_ASN_ext_0     =  20;    %  mM  =  6
 c_ASN_int_0     =    0;    %  mM  =  7
 c_ASP_ext_0     =   2;    %  mM  =  8
 c_ASP_int_0     =    0;    %  mM  =  9
@@ -20,18 +20,18 @@ c_CYS_0         =    0;    %  mM  =  17
 c_FADH2_0       =    0;    %  mM  =  18
 c_G6P_0         =    0;    %  mM  =  19
 c_GLC_ext_0     =  73;    %  mM  =  20 % GLUCOSE
-c_GLN_ext_0     = 3.9;    %  mM  =  21
+c_GLN_ext_0     =  3.9;    %  mM  =  21
 c_GLN_int_0     =    0;    %  mM  =  22
 c_GLU_ext_0     = 0.6;    %  mM  =  23
 c_GLU_int_0     =    0;    %  mM  =  24
 c_GLY_ext_0     = 3.4;    %  mM  =  25
 c_GLY_int_0     =    0;    %  mM  =  26
-c_LAC_ext_0     =   6;    %  mM  =  27
+c_LAC_ext_0     =   5;    %  mM  =  27
 c_LAC_int_0     =    0;    %  mM  =  28
 c_MAL_0         =    0;    %  mM  =  29
 c_NADH_cyto_0   =    0;    %  mM  =  30
 c_NADH_mito_0   =    0;    %  mM  =  31
-c_NH3_ext_0     = 0.7;    %  mM  =  32
+c_NH3_ext_0     =  0.7;    %  mM  =  32
 c_NH3_int_0     =    0;    %  mM  =  33
 c_O2_ext_0      =    0.1666;    %  mM  =  34
 c_O2_int_0      =    0;    %  mM  =  35
@@ -40,7 +40,7 @@ c_PYR_0         =    0;    %  mM  =  37
 c_SER_ext_0     =  11;    %  mM  =  38
 c_SER_int_0     =   0;    %  mM  =  39
 shift_0         =   0;    %    
-R_0             =   6.2;    %units
+R_0             =   5.7;    %units
 
 initialConditions_vec = [c_AKG_0, c_ALA_ext_0, c_ALA_int_0, c_ANTI_ext_0,...
     c_ANTI_int_0, c_ASN_ext_0, c_ASN_int_0, c_ASP_ext_0, c_ASP_int_0,...

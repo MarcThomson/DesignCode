@@ -5,7 +5,7 @@ MabTotal =[0];
 NMABTotal = [0];
 NCTotal = [0];
 %RTotal = [0];
-for i = 1:8
+for i = 1:7
 t = totalStructure(-i);C=totalStructure(i);
 VCDtemp = VCD(t).*C(11,:);
 VCDtotal = [VCDtotal,VCDtemp];

@@ -3,7 +3,7 @@
 %% Inputs %%
 close all; clear
 cellType = 1;                                                              % Cells of Type 1=A and 0=B can be selected.
-dt = 0.25;                                                                 % days. Timestep for iteration.
+dt = 0.01;                                                                 % days. Timestep for iteration.
 tend = 10;                                                                 % days. Total days for calculation.
 shiftDay=4;                                                                % days. The day of the temperature shift where the temperature is slightly raised.
 
@@ -56,14 +56,11 @@ for i=1:length(t)-1
     end
     
     Aeq = stoichMatrix;                                                    % Constraint for optimization
-    I_external=find(1-internal);                                           % We are only assuming pseudosteady-state for intracellular components.
-    for j=flip(1:length(I_external))
-        Aeq=[Aeq(1:I_external(j)-1,:);Aeq(I_external(j)+1:end,:)];
-    end
-    
+    Aeq = Aeq(find(internal),:);
+
     H = zeros(length(x0),length(x0));
     f = zeros(length(x0),1);
-    I = find(rates);
+    I = [1,2,3,8,9,10,11,12,13,16,17,33];
     for j = 1:length(I)
         H(I(j),I(j)) = 2/x0(I(j))^2;
         f(I(j)) = -2/x0(I(j));
@@ -75,7 +72,7 @@ for i=1:length(t)-1
     %% Nonlinear Optimization Execution
     options = optimoptions('quadprog','OptimalityTolerance',tol,...        % Define options for quadratic programming
         'MaxIterations',30000,'Algorithm','interior-point-convex',...
-        'StepTolerance',1e-12);%,'Display','off');                     
+        'StepTolerance',1e-12,'Display','off');                     
     
     [v(:,i),objectives(i),exitFlagVec(i)]=...                              % Execute the quadratic optimization
         quadprog(H,f,A,b,Aeq,beq,[],[],[],options);
@@ -84,6 +81,13 @@ for i=1:length(t)-1
     p=((v(Itest,i)-x0(Itest))./x0(Itest)).^2;
     [Mtest, I2] = max(p);
     worst(i) = I2;
+    initialFlux
+    diff = ((initialFluxVec-v(:,1))./initialFluxVec).^2;
+    if v(34,1)<800
+        denom = 800;
+    else
+        denom = v(34,1);
+    end
     
     R = (2*v(1,i)+0.64*v(16,i))/v(34,i);                                   % Define the R term in terms of current rates
     C(1:end-2,i+1) =  C(1:end-2,i) +  ...                                  % Updating cell density
@@ -97,7 +101,7 @@ for i=1:length(t)-1
     end
          
     if t(i)-floor(t(i))==0 && C(20,i)<=40                                  % If the sugar concentration drops below the threshold of 40, more sugar is added. 
-        C(20,i+1)=C(20,i)+3.5;
+        C(20,i+1)=C(20,i)+8;
     end
 end
 plotTool                                                                   % Generates a figure for the species with designated importance.
