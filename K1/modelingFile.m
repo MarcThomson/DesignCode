@@ -1,10 +1,10 @@
 % Modeling File
 
 %% Inputs %%
-close all;
+close all; clear
 cellType = 1;                                                              % Cells of Type 1=A and 0=B can be selected.
 dt = 0.25;                                                                 % days. Timestep for iteration.
-tend = 30;                                                                 % days. Total days for calculation.
+tend = 10;                                                                 % days. Total days for calculation.
 shiftDay=4;                                                                % days. The day of the temperature shift where the temperature is slightly raised.
 
 %% Load variables from definitions
@@ -29,6 +29,7 @@ C = zeros(numComponents+2,length(t));                                      % Add
 C(:,1) = initialConditions_vec;                                            % Adds initial conditions to the first column of the solution matrix.
 objectives=zeros(steps,1);                                                 % Initializes objectives. These are minimized in the nonlinear optimization.
 exitFlagVec=zeros(steps,1);                                                % Initialilzes exitflags. These signify if the optimization ran into an error.
+worst = [];
 %% Begin Iteration
 for i=1:length(t)-1
     
@@ -74,10 +75,15 @@ for i=1:length(t)-1
     %% Nonlinear Optimization Execution
     options = optimoptions('quadprog','OptimalityTolerance',tol,...        % Define options for quadratic programming
         'MaxIterations',30000,'Algorithm','interior-point-convex',...
-        'StepTolerance',1e-12,'Display','off');                     
+        'StepTolerance',1e-12);%,'Display','off');                     
     
     [v(:,i),objectives(i),exitFlagVec(i)]=...                              % Execute the quadratic optimization
         quadprog(H,f,A,b,Aeq,beq,[],[],[],options);
+    
+    Itest = find(x0);
+    p=((v(Itest,i)-x0(Itest))./x0(Itest)).^2;
+    [Mtest, I2] = max(p);
+    worst(i) = I2;
     
     R = (2*v(1,i)+0.64*v(16,i))/v(34,i);                                   % Define the R term in terms of current rates
     C(1:end-2,i+1) =  C(1:end-2,i) +  ...                                  % Updating cell density
