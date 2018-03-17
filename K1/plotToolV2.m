@@ -1,5 +1,6 @@
 
-close all;
+%close all;
+figure(5);clf;
 Titles=[{'BIOM'},{'ANTI'},{'GLUC'},{'LAC '},{'ALA '},{'ASN '},{'ASP '},{'C-C '},{'GLN '},...
     {'GLY '},{'SER '},{'NH3 '},{'GLU '},{'VCD '},{'R  '}];
 

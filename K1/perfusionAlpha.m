@@ -3,7 +3,7 @@ K/(K+1)	;	%	ALA
 K/(K+1)	;	%	ANTI
 K/(K+1)	;	%	ASN
 K/(K+1)	;	%	ASP
-0.83	;	%	BIOM
+0.99		;	%	BIOM
 K/(K+1)	;	%	C_C
 K/(K+1)	;	%	CO2
 K/(K+1)	;	%	GLC

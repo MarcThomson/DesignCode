@@ -8,7 +8,7 @@ vessel = 1; %inital vessel
     
 %% Inputs %%
 cellType = 1;                                                              % Cells of Type 1=A and 0=B can be selected.
-dt = 0.05;                                                                 % days. Timestep for iteration.
+dt = 0.01;                                                                 % days. Timestep for iteration.
 tend = 10;                                                                 % days. Total days for calculation.
 shiftDay=11;                                                                % days. The day of the temperature shift where the temperature is slightly raised.
 
@@ -110,7 +110,11 @@ while pVCD(i,vessel) < critDensity
     [v(:,i),objectives(i),exitFlagVec(i)]=...                              % Execute the quadratic optimization
         quadprog(H,f,A,b,Aeq,beq,[],[],[],options);
     
-    R = (2*v(1,i)+0.64*v(16,i))/v(34,i);                                   % Define the R term in terms of current rates
+    if min(eig(H))<0
+        exitFlagVec(i) = -exitFlagVec(i);
+    end
+    
+    R = (2*v(1,i)+0.64*v(16,i))/v(34,i);  %5.889*exp(-0.6695*t(i))+0.1072*t(i);%                                 % Define the R term in terms of current rates
     C(1:end-2,i+1) =  C(1:end-2,i) +  ...                                  % Updating cell density
     (stoichMatrix*v(:,i))*dt* VCD(t(vessel))/2.3*C(11,i)/1000;                  % 
     C(end-1,i+1) = C(end-1,i);
@@ -136,6 +140,10 @@ while pVCD(i,vessel) < critDensity
        %vessel=vessel+1; 
        break
     end
+    
+    
+    
+    
     i = i + 1;
 end
 end

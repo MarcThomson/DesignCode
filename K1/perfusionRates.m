@@ -1,4 +1,4 @@
-function componentRates = perfusionRates(C)
+function componentRates = perfusionRates(C,t)
 %% Extra inputs
 cellType = 1;
 Rguess = 6.2;
@@ -59,11 +59,13 @@ Rold = Rguess;
 
 
 %% Minimize R difference
-it = 1;
-while abs((Rnew-Rold)/Rold) > R_tol
-    it = it+1;
-    Rold = Rnew;
-    y = [C_new; shift; Rold; cellType];
+%it = 1;
+%while abs((Rnew-Rold)/Rold) > R_tol
+    %it = it+1;
+    %Rold = Rnew;
+    %y = [C_new; shift; Rold; cellType];
+    R = 5.889*exp(-0.6695*t)+0.1072*t;
+    y = [C_new; shift; R; cellType];
     inputs = mat2cell(y,ones(1,length(y)),1);
     x0 = rateLaws(inputs{:});
     I = find(x0);
@@ -74,8 +76,8 @@ while abs((Rnew-Rold)/Rold) > R_tol
            f(I(j)) = -2/x0(I(j)); 
     end
     v = quadprog(H,f,A,b,Aeq,beq,[],[],x0,options);    
-    Rnew = (2*v(1)+0.64*v(16))/v(34);
-end
+    %Rnew = (2*v(1)+0.64*v(16))/v(34);
+%end
     
 componentRates = stoichMatrix*v  * (C_new(11)*VCD/2.31)   /1000; 
 

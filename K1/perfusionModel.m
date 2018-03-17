@@ -2,7 +2,7 @@ clear;close all;
 %% Inputs %%
 K = 0.10;
 tau = 1; %Defined twice!
-tend = 40;
+tend = 30;
 %% Load variables from definitions
 reversibleLogicals;
 internalLogicals;
@@ -24,5 +24,5 @@ function derivativeSystem = dCdt(t,C)
     perfusionInputs;
     perfusionInitialConditions;
     load('stoichMatrix.mat')
-    derivativeSystem = (C_i_in + perfusionRates(C)*tau-(1-alphaComponents)*(1+K).*C)/tau;
+    derivativeSystem = (C_i_in + perfusionRates(C,t)*tau-(1-alphaComponents)*(1+K).*C)/tau;
 end
