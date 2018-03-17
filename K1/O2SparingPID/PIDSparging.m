@@ -14,6 +14,9 @@ batchReactor  = 0; %1 for batch reactor, 0 otherwise
 %      0.3   .2   0.00];%Flow
 %   %K1  K2   K3
 
+MinBubble = .5e-2;  % minimum bubble diameter for deadband control, m
+MaxBubble = .6e-2;  % maximum bubble diameter for deadband control, m
+
 %%
 
 parameters = reshape(parameters,[3,3]);
@@ -78,27 +81,27 @@ for i = 2 : length(t_new)
     [FO2_1, FCO2_1, ~, O2prop_vec(i-1), CO2prop_vec(i-1), ~] = ...
     spargerV2( C_O2_sparge(i-1) + C_O2_rxn(i-1),...
                C_CO2_sparge(i-1) + C_CO2_rxn(i-1),...
-                    airFrac,CO2Frac,Qtotal(i-1),Dt,Nrad(i-1),t_new(i-1),shift);
+                    airFrac,CO2Frac,Qtotal(i-1),Dt,Nrad(i-1),t_new(i-1),shift,MinBubble,MaxBubble);
     FO2_1 = 24*3600*FO2_1;
     FCO2_1 = 24*3600*FCO2_1;
     
    [FO2_2, FCO2_2, ~, ~, ~, ~] = ...
     spargerV2( C_O2_sparge(i-1) + C_O2_rxn(i-1)*0.5+  C_O2_rxn(i)*0.5   + FO2_1*h/2,...
                C_CO2_sparge(i-1)+ C_CO2_rxn(i-1)*0.5+ C_CO2_rxn(i)*0.5  + FCO2_1*h/2,...
-                    airFrac,CO2Frac,Qtotal(i-1),Dt,Nrad(i-1),t_new(i-1)+h/2,shift);
+                    airFrac,CO2Frac,Qtotal(i-1),Dt,Nrad(i-1),t_new(i-1)+h/2,shift,MinBubble,MaxBubble);
     FO2_2 = 24*3600*FO2_2;
     FCO2_2 = 24*3600*FCO2_2;
 
     [FO2_3, FCO2_3, ~, ~, ~, ~] = ...
     spargerV2( C_O2_sparge(i-1) + C_O2_rxn(i-1)*  0.5+  C_O2_rxn(i)*0.5 + FO2_2*h/2,...
                C_CO2_sparge(i-1) + C_CO2_rxn(i-1)*0.5 + C_CO2_rxn(i)*0.5+ FCO2_2*h/2,...
-                    airFrac,CO2Frac,Qtotal(i-1),Dt,Nrad(i-1),t_new(i-1)+h/2,shift);
+                    airFrac,CO2Frac,Qtotal(i-1),Dt,Nrad(i-1),t_new(i-1)+h/2,shift,MinBubble,MaxBubble);
     FO2_3 = 24*3600*FO2_3;
     FCO2_3 = 24*3600*FCO2_3;
     
     [FO2_4, FCO2_4, ~, ~, ~, ~] = ...
     spargerV2( C_O2_sparge(i-1) + C_O2_rxn(i) + FO2_3*h,  C_CO2_sparge(i-1) + C_CO2_rxn(i)  + FCO2_3*h,...
-                    airFrac,CO2Frac,Qtotal(i-1),Dt,Nrad(i-1),t_new(i-1)+h,shift);
+                    airFrac,CO2Frac,Qtotal(i-1),Dt,Nrad(i-1),t_new(i-1)+h,shift,MinBubble,MaxBubble);
     FO2_4 = 24*3600*FO2_4;
     FCO2_4 = 24*3600*FCO2_4;    
     
@@ -107,7 +110,7 @@ for i = 2 : length(t_new)
     
      if floor(t_new(i))-t_new(i) ==      0
         figure(1);plot(t_new(1:i-1),100*O2prop_vec(1:i-1),'LineWidth',2);xlabel('time (days');ylabel('O_2 Saturation Percentage');drawnow
-        figure(2);plot(t_new(1:i-1),100*CO2prop_vec(1:i-1),'LineWidth',2);;xlabel('time (days');ylabel('CO_2 Saturation Percentage');drawnow
+        figure(2);plot(t_new(1:i-1),100*CO2prop_vec(1:i-1),'LineWidth',2);xlabel('time (days');ylabel('CO_2 Saturation Percentage');drawnow
         
      end
     %update for ith iteration
@@ -117,7 +120,7 @@ for i = 2 : length(t_new)
     %g
     [~, ~, Nrad(i), O2prop, CO2prop, dB(i)] = ...
     spargerV2(C_O2_sparge(i) + C_O2_rxn(i),  C_CO2_sparge(i) + C_CO2_rxn(i)  + FCO2_3*h,...
-                    airFrac,CO2Frac,Qtotal(i-1),Dt,Nrad(i-1),t_new(i),shift);
+                    airFrac,CO2Frac,Qtotal(i-1),Dt,Nrad(i-1),t_new(i),shift,MinBubble,MaxBubble);
     
     CO2prop_vec(i) = CO2prop;
     O2prop_vec(i) = O2prop;
@@ -179,5 +182,5 @@ ErrorCO2 = trapz(t_new,ErrorCO2)^(1/n);
 
 fobj = ErrorO2 + ErrorCO2;
         figure(1);plot(t_new(1:i-1),100*O2prop_vec(1:i-1),'LineWidth',2);xlabel('time (days');ylabel('O_2 Saturation Percentage');drawnow
-        figure(2);plot(t_new(1:i-1),100*CO2prop_vec(1:i-1),'LineWidth',2);;xlabel('time (days');ylabel('CO_2 Saturation Percentage');drawnow
+        figure(2);plot(t_new(1:i-1),100*CO2prop_vec(1:i-1),'LineWidth',2);xlabel('time (days');ylabel('CO_2 Saturation Percentage');drawnow
 end

@@ -1,5 +1,5 @@
 function [FO2, FCO2, Nrad, O2prop, CO2prop, dB] = ...
-    spargerV2(CL_O2,CL_CO2,airFrac,CO2Frac,Qgas,Dt,Nrad,t,shift)
+    spargerV2(CL_O2,CL_CO2,airFrac,CO2Frac,Qgas,Dt,Nrad,t,shift,MinBubble,MaxBubble)
 % give the oxygen flux for the current sparger system
 % inputs:
 % CL_O2 = concentration of O2 in liquid phase, mM
@@ -10,6 +10,8 @@ function [FO2, FCO2, Nrad, O2prop, CO2prop, dB] = ...
 % Dt = diameter of tank, m
 % Nrad = initial speed of impellers, rad/s
 % t = current time, day
+% Minbubble = minimum desired bubble size, m
+% Maxbubble = maximum desired bubble size, m
 % outputs:
 % FO2 = O2 flux due to mass transfer, mM/s
 % FCO2 = CO2 flux due to mass transfer, mM/s
@@ -20,8 +22,7 @@ function [FO2, FCO2, Nrad, O2prop, CO2prop, dB] = ...
 
 % other inputs
 ImpVesRatio = 3/9;   % ratio of impeller diameter to vessel diameter
-MinBubble = .5e-2;  % minimum bubble diameter for deadband control, m
-MaxBubble = .6e-2;  % maximum bubble diameter for deadband control, m
+
 if shift 
     T = 31; % temperature, celsius
 else
