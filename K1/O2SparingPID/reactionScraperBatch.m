@@ -1,6 +1,9 @@
-%reactionScraper
-%
+% reactionScraper for Batch Reaction 
+% Prints out the net reaction for the batch case and computes the amount of
+% MAB Produced
 
+
+% Molar masses of external components in g/mol
 MM = [
 89  ;	%	ALA   =  1
 126	;	%	ANTI  =  2
@@ -20,35 +23,52 @@ MM = [
    ]; %g/mol
 
 
+% names of the external components
 names ={
 'ALA','ANTI','ASN','ASP','BIOM','C_C','CO2','GLC','GLN','GLU','GLY',...
 'LAC','NH3','O2','SER'
 };
+
+% index of the component that the reaction will be normalized to (i.e.,
+% this stoich coefficienct will be 1
 I_unity = 8;
 
-massChange = (C(:,end)*Volume(end) - sum(totalFeed')'- C(:,1)*Volume(1)).*MM;  %mg
+% compute the difference between the mass input and output for each
+% component in mg
+massChangeIn = (sum(totalFeed')' + C(:,1)*Volume(1)).*MM; %mg
+massChangeOut = (C(:,end)*Volume(end)).*MM;  %mg
+massChange= massChangeOut - massChangeIn;
 
-massChange = massChange/abs(massChange(I_unity ));
+% normalize the mass change to the unit index
+massChangeScaled = massChange/abs(massChange(I_unity ));
 
-I_positive = find(massChange > 0);
-I_negative = find(massChange < 0);
+% find the components net produced and consumed
+I_positive = find(massChangeScaled > 0);
+I_negative = find(massChangeScaled < 0);
 
+% initialize reaction string
 rxn= '';
 
+% add components consumed to the reaction string
 for i = 1:length(I_negative)-1
-    rxn = [rxn,num2str(-massChange(I_negative(i))),' ',names{I_negative(i)},' + '];
+    rxn = [rxn,num2str(-massChangeScaled(I_negative(i))),' ',names{I_negative(i)},' + '];
 end
-rxn = [rxn,num2str(-massChange(I_negative(end))),' ',names{I_negative(end)},' --> '];
-    
-for i = 1:length(I_positive)-1
-    rxn = [rxn,num2str(massChange(I_positive(i))),' ',names{I_positive(i)},' + '];
-end
-rxn = [rxn,num2str(massChange(I_positive(end))),' ',names{I_positive(end)},' + '];
 
-water = sum(massChange);
+% add reaction arrow
+rxn = [rxn,num2str(-massChangeScaled(I_negative(end))),' ',names{I_negative(end)},' --> '];
+
+% add components being produced
+for i = 1:length(I_positive)-1
+    rxn = [rxn,num2str(massChangeScaled(I_positive(i))),' ',names{I_positive(i)},' + '];
+end
+
+% assume all leftover mass is water and add it to the reaction
+rxn = [rxn,num2str(massChangeScaled(I_positive(end))),' ',names{I_positive(end)},' + '];
+water = sum(massChangeScaled);
 rxn = [rxn,num2str(water),' H2O'];
 
+% find extent with respect to the 
+extent = -massChange(I_unity)./massChangeIn(I_unity);
 
-extent = -(C(I_unity,end)-C(I_unity,1))/C(I_unity,1);
-
-MAB_Producted = Volume(end)*C(2,end)*126/1000/1000*1000;
+%Amount of MAB produced in kg
+MAB_Produced = Volume(end)*C(2,end)*126/1000/1000*1000;
