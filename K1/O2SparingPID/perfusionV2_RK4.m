@@ -32,7 +32,10 @@ C_i_in = initialConditions_vec(I);        % Isolate concentrations of external c
 C0 = ( 400 * C_i_in + 100*C0)/(500);      % Find new concentrations from dilution of seed train 
 t = 0:h:tend;
 
-C0 = [C0;C0(5)];                          %?????
+C0 = [C0;C0(5)];                          % Appending biomass element for Perfusion.
+                                          % This allows rate function to
+                                          % handle both perfusion and batch
+                                          % cases.
 
 C = zeros(length(C0),length(t));          % Initialize solution matrix
 C(:,1) = C0;                              % Initial conditions on media
@@ -45,6 +48,7 @@ exitVec(1) = 1;                           % For uniform vector sizing an initial
 v = zeros(34,length(t));                  % Initialize mass flux vector
 I_notBIOM = [1:4,6:length(C0)-1];         % 
 
+%% Runge Kutta 4 
 for i = 1:length(t)-1                     % Start loop on time (days)
     
     if t(i)>shiftDay                      % Check if shiftDay>=currentDay
@@ -56,52 +60,56 @@ for i = 1:length(t)-1                     % Start loop on time (days)
   % the current timestep. 
    [K1, R1,~,~,~] =  instantRatesV2(C(1:end-1,i),t(i),Perfusion,cellType, shift, R(i), parameters, shiftDay);
   % K1 is rate of each component. Below is a mass balance on each component
-  % in the perfusion system. This excludes biomass as biomass is handled
+  % in the perfusion system.
+  K1(I_notBIOM) = K1(I_notBIOM) - C(I_notBIOM,i)/tau + C_i_in(I_notBIOM)/tau; 
+  K1=[K1;K1(5)];
+  %  This excludes biomass as biomass is handled
   % separately in the next line. 
    K1(5) = K1(5) - alpha/tau*C(5,i);
    K1 = K1*h;   % Generates the actual component changes based on timestep.
   % This is the first term generated for Runge Kutta 4
    
+  % The next few sections of code continue the Runge Kutta method as it
+  % pertains to this system. To understand each line individually, see the
+  % first iteration on K1 as they fundamentally do not change.
    [K2, R2,~,~,~] = instantRatesV2(C(1:end-1,i)+K1(1:end-1)/2, t(i) + h/2 ,Perfusion,cellType, shift, R1, parameters, shiftDay);
    K2(I_notBIOM) = K2(I_notBIOM) - C(I_notBIOM,i)/tau + C_i_in(I_notBIOM)/tau;
    K2 = [K2; K2(5)];
    K2(5) = K2(5) - alpha/tau*C(5,i);
    K2 = K2*h; 
   % This is the second term generated for Runge Kutta 4
-   
    [K3, R3,~,~,~] = instantRatesV2(C(1:end-1,i)+K2(1:end-1)/2, t(i) + h/2 ,Perfusion,cellType, shift, R2, parameters, shiftDay);
    K3(I_notBIOM) = K3(I_notBIOM) - C(I_notBIOM,i)/tau + C_i_in(I_notBIOM)/tau;
    K3 = [K3; K3(5)];
    K3(5) = K3(5) - alpha/tau*C(5,i);
    K3 = K3*h;
   % This is the third term generated for Runge Kutta
-   
    [K4, R4,~,~,~] = instantRatesV2(C(1:end-1,i)+K3(1:end-1), t(i) + h ,Perfusion,cellType, shift, R3, parameters, shiftDay);
    K4(I_notBIOM) = K4(I_notBIOM) - C(I_notBIOM,i)/tau + C_i_in(I_notBIOM)/tau;
    K4= [K4; K4(5)];
    K4(5) = K4(5) - alpha/tau*C(5,i);
    K4 = K4*h; 
   % This is the fourth and final term generated for Runge Kutta 4
-   
    Rtest = (R1+2*R2+2*R3+R4)/6;
    rates = (K1+2*K2+2*K3+K4)/6;
-  
-   
+
    C(:,i+1) = C(:,i) + rates;
    
    [~, R(i+1),v(:,i+1),objVec(i+1),exitVec(i+1)] =...
        instantRatesV2(C(1:end-1,i+1), t(i) + h ,Perfusion,cellType, shift, Rtest, parameters, shiftDay); 
 end
 
+%% Plotting and output handeling
 figure(1);clf;
 subplot(2,1,1);plot(t,C(5,:)/2.31); hold on; % Plots biomass
 subplot(2,1,1);plot(t,C(end,:)/2.31);        % Plots VCD on same graph as BIO
-subplot(2,1,2);plot(t,C(5,:)./C(end,:))      
-plotToolV2
+subplot(2,1,2);plot(t,C(5,:)./C(end,:))      % 
+plotToolV2                                   % Plot all relevant concentration profiles
 reactionScraperPerfusion
 
-
-if writeFile
+% If the current state is to be written (writeFile=1), save outputs as
+% Perfusion_Output.mat
+if writeFile                                
 C_O2_vec = smooth(C(14,:),15);
 C_CO2_vec = smooth(C(7,:),15);
 fileName = 'Perfusion_Output.mat';
