@@ -3,14 +3,17 @@
 
 
 % Inputs
-batchReactor  = 1; %1 for batch reactor, 0 otherwise
+batchReactor  = 0; %1 for batch reactor, 0 otherwise
+CO2_0 = 10E-2; %percentage of initial feed that is CO2
+O2_0 = 40E-2; %percentage of initial feed that is O2
+ImpVesRatio = 4/9;   % ratio of impeller diameter to vessel diameter
 
 % Dataset:
 % load('Batch_Output.mat');
 % load('Perfusion_Output.mat');
-%load('Perfusion20.mat');
- load('Perfusion100.mat');
-% load('Batch20.mat');
+% load('Perfusion20.mat');
+% load('Perfusion100.mat');
+ load('Batch20.mat');
 % load('Batch80.mat');
 % load('Batch400.mat');
 
@@ -27,7 +30,7 @@ K = [2    200    0.00 ; %O2
      %K1    K2   K3
 
 MinBubble = 0.6e-2;  % minimum bubble diameter for deadband control, m
-MaxBubble = 0.7e-2;  % maximum bubble diameter for deadband control, m
+MaxBubble = 0.65e-2;  % maximum bubble diameter for deadband control, m
 
 %%
 % reset the initial concentrations to a reasonable level (otherwise they
@@ -80,8 +83,8 @@ Nrad = zeros(length(t_new),1); %rotation speed of impellers, rad/s
 % Select some reasonable initial values 
 Nrad(1) = 1*2*pi; %60 rpm
 Qtotal(1) = 10e-3*A; % aprroximately the middle allowable flow rate
-QCO2(1) = 6E-2*Qtotal(1); % 6% of the initial flow is 
-QO2(1) = 0.4*Qtotal(1);
+QCO2(1) = 12E-2*Qtotal(1); % 6% of the initial flow is 
+QO2(1) = 0.6*Qtotal(1);
 
 
 for i = 2 : length(t_new)
@@ -109,7 +112,7 @@ for i = 2 : length(t_new)
     spargerV2( C_O2_sparge(i-1) + C_O2_rxn(i-1),...
                C_CO2_sparge(i-1) + C_CO2_rxn(i-1),...
                airFrac,CO2Frac,Qtotal(i-1), Dt, Nrad(i-1), t_new(i-1),...
-               shift, MinBubble, MaxBubble);
+               shift, MinBubble, MaxBubble, ImpVesRatio);
     FO2_1 = 24*3600*FO2_1; %convert from /s basis to /day
     FCO2_1 = 24*3600*FCO2_1; %convert from /s basis to /day
     
@@ -118,7 +121,7 @@ for i = 2 : length(t_new)
     spargerV2( C_O2_sparge(i-1) + FO2_1*h/2 + 1/2*(C_O2_rxn(i-1)+ C_O2_rxn(i))   ,...
                C_CO2_sparge(i-1) + FCO2_1*h/2 + 1/2*(C_CO2_rxn(i-1) + C_CO2_rxn(i)),...
                airFrac, CO2Frac, Qtotal(i-1), Dt, Nrad(i-1),...
-               t_new(i-1) + h/2, shift, MinBubble, MaxBubble);
+               t_new(i-1) + h/2, shift, MinBubble, MaxBubble, ImpVesRatio);
     FO2_2 = 24*3600*FO2_2; %convert from /s basis to /day
     FCO2_2 = 24*3600*FCO2_2; %convert from /s basis to /day
     
@@ -127,7 +130,7 @@ for i = 2 : length(t_new)
     spargerV2( C_O2_sparge(i-1) + FO2_2*h/2 + 1/2*(C_O2_rxn(i-1) + C_O2_rxn(i)),...
                C_CO2_sparge(i-1)+ FCO2_2*h/2 + 1/2*(C_CO2_rxn(i-1) + C_CO2_rxn(i)),...
                     airFrac, CO2Frac, Qtotal(i-1), Dt, Nrad(i-1),...
-                    t_new(i-1) + h/2, shift, MinBubble, MaxBubble);
+                    t_new(i-1) + h/2, shift, MinBubble, MaxBubble, ImpVesRatio);
     FO2_3 = 24*3600*FO2_3; %convert from /s basis to /day
     FCO2_3 = 24*3600*FCO2_3; %convert from /s basis to /day
     
@@ -136,7 +139,7 @@ for i = 2 : length(t_new)
     spargerV2(C_O2_sparge(i-1) + FO2_3*h + C_O2_rxn(i),...
               C_CO2_sparge(i-1) + FCO2_3*h + C_CO2_rxn(i)  ,...
                     airFrac, CO2Frac, Qtotal(i-1), Dt, Nrad(i-1),...
-                    t_new(i-1) + h, shift, MinBubble, MaxBubble);
+                    t_new(i-1) + h, shift, MinBubble, MaxBubble, ImpVesRatio);
     FO2_4 = 24*3600*FO2_4; %convert from /s basis to /day
     FCO2_4 = 24*3600*FCO2_4; %convert from /s basis to /day
     
@@ -154,7 +157,7 @@ for i = 2 : length(t_new)
     spargerV2(C_O2_sparge(i) + C_O2_rxn(i),...
               C_CO2_sparge(i) + C_CO2_rxn(i),...
               airFrac, CO2Frac, Qtotal(i-1), Dt, Nrad(i-1), t_new(i), ...
-              shift, MinBubble, MaxBubble);
+              shift, MinBubble, MaxBubble, ImpVesRatio);
     
     % add the saturation proportions to the vectors
     CO2prop_vec(i) = CO2prop;
@@ -195,14 +198,14 @@ for i = 2 : length(t_new)
         end
        
         % if O2 flow is higher than the total flow minus CO2 flow, reset it
-        if QO2(i)>Qtotal(i)*0.95
+        if QO2(i)>Qtotal(i)*0.95 
             % if the O2 flow is too high, adjust the total flow to
             % compensate, but don't let it go beyond acceptable bounds
-            Qtotal(i) = QO2(i)*0.95;
+            Qtotal(i) = QO2(i)/(1-CO2Frac)/0.95;
             if Qtotal(i)/A > 18.1e-3
                 Qtotal(i) = A*18.1e-3;
             end
-            QO2(i) = Qtotal(i)*(1-CO2Frac);
+            QO2(i) = Qtotal(i)*(1-CO2Frac)*0.95;
             %QCO2(i) = CO2Frac * Qtotal(i);
         end
         % if O2 concentration is lower than 0.2095, reset it
@@ -228,6 +231,7 @@ for i = 2 : length(t_new)
             QCO2(i) = Qtotal(i)*0.95;
         end
         
+       
         
     % if not on a loop timestep, don't change it    
     else

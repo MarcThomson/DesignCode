@@ -1,5 +1,5 @@
 function [FO2, FCO2, Nrad, O2prop, CO2prop, dB] = ...
-    spargerV2(CL_O2,CL_CO2,airFrac,CO2Frac,Qgas,Dt,Nrad,t,shift,MinBubble,MaxBubble)
+    spargerV2(CL_O2,CL_CO2,airFrac,CO2Frac,Qgas,Dt,Nrad,t,shift,MinBubble,MaxBubble, ImpVesRatio )
 % give the oxygen flux for the current sparger system
 % inputs:
 % CL_O2 = concentration of O2 in liquid phase, mM
@@ -12,6 +12,7 @@ function [FO2, FCO2, Nrad, O2prop, CO2prop, dB] = ...
 % t = current time, day
 % Minbubble = minimum desired bubble size, m
 % Maxbubble = maximum desired bubble size, m
+% ImpVesRatio = ratio of impeller diameter to vessel diameter
 % outputs:
 % FO2 = O2 flux due to mass transfer, mM/s
 % FCO2 = CO2 flux due to mass transfer, mM/s
@@ -19,9 +20,6 @@ function [FO2, FCO2, Nrad, O2prop, CO2prop, dB] = ...
 % O2prop = current O2 saturation percentage
 % CO2prop = current CO2 saturation percentage
 % dB = current mean bubble diameter, m
-
-% other inputs
-ImpVesRatio = 3/9;   % ratio of impeller diameter to vessel diameter
 
 if shift 
     T = 31; % temperature, celsius
@@ -87,6 +85,23 @@ kLaCO2 = 0.92*kLaO2; % kLa for CO2, Hz
 
 FO2 = kLaO2*(CstarO2-CL_O2);  %O2 flux, mM/s
 FCO2 = kLaCO2*(CstarCO2-CL_CO2);  %CO2 flux, mM/s
+
+eps = 22.4*(PV^0.24)*(Qgas^0.65)/100; % void fraction. CHECK
+a = 6*eps/dB; % bubble specific area m^2/m^3 
+ahead = A/VR; % head specific area m^2/m^3 
+
+kLaO2_head = ahead/a*kLaO2;
+kLaCO2_head = ahead/a*kLaCO2; 
+
+
+% Recompute Henry's law for headspace
+PO2 = Pmean*0.2095; %Total Pressure of O2 in air, Pa
+PCO2 = Pmean*400e-6;%Total Pressure of CO2 in air, Pa
+CstarO2 = PO2/hO2;      % saturation concentation O2 in liquid, mol/m^3
+CstarCO2 = PCO2/hCO2;   % saturation concentration CO2 in liquid, mol/m^3
+
+FO2 = FO2 + kLaO2_head*(CstarO2-CL_O2);  %O2 flux, mM/s
+FCO2 = FCO2 + kLaCO2_head*(CstarCO2-CL_CO2);  %CO2 flux, mM/s
 
 
 CstarO2 = 1E5/hO2;    % O2 sat conc under pure O2 atmosphere mol/m^3 = mM
