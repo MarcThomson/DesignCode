@@ -35,7 +35,12 @@ I_unity = 8;
 
 % compute the difference between the mass input and output for each
 % component in mg
-massChangeIn = (sum(totalFeed')' + C(:,1)*Volume(1)).*MM; %mg
+if exist('totalFeed')
+    massChangeIn = (sum(totalFeed')' + C(:,1)*Volume(1)).*MM; %mg
+else
+    Volume = vesselSize(vessel)/1e6;
+    massChangeIn = (C(:,1)*Volume(1)).*MM;
+end
 massChangeOut = (C(:,end)*Volume(end)).*MM;  %mg
 massChange= massChangeOut - massChangeIn;
 

@@ -1,19 +1,22 @@
-clear;close all;clc;
-%load('ObjFun.mat');
-load('R2.mat')
-%guess
-parameters = x;
-parameters = exp(parameters);
-%parameters  = log(x0);
+clear;close all;clc;                   % Clear out current variable list
+% Parameters guess
+load('finalParameters_v1.mat')
 
 critDensity = 10;
-system = 1;                         % 1 = perfusion, 0 = batch
+system = 0;                         % 1 = perfusion, 0 = batch
+writeFile = 0;
 
 if system == 0                      % Vessel sizes for the batch seed train
     vesselSize =  [1,4,15,60,250,1000,4E3,20E3,80E3,400E3];
 elseif system ==1                   % Vessel sizes for the perfusion seed train
     vesselSize =  [1,4,15,60,250,1000,4E3,20E3,100E3];
 end
+
+rxnContainer = containers.Map('KeyType','double','ValueType','any');
+cContainer = containers.Map('KeyType','double','ValueType','any');
+tContainer = containers.Map('KeyType','double','ValueType','any');
+Rcontainer = containers.Map('KeyType','double','ValueType','any');
+extentContainer = containers.Map('KeyType','double','ValueType','any');
 %% Inputs %%
 tend = 10;                          % Defines the length of the seed train
 cellType = 1;                       % Identifies the cell type (1=A)
@@ -89,7 +92,7 @@ for vessel = 2:length(vesselSize)
         K4 = K4*h;
     % The next line calculates the final reaction rate for each component
         rates = (K1+2*K2+2*K3+K4)/6;
-        %Rtest = (R1+2*R2+2*R3+R4)/6;
+        Rtest = (R1+2*R2+2*R3+R4)/6;
     % The next line calculates the concentration at the next step
         C(:,i+1) = C(:,i) + rates; 
     
@@ -111,8 +114,21 @@ VCD_total = [VCD_total,VCD(2:i)];
 vesselSize_total = [vesselSize_total, vesselSize_vec(2:i)];
 Tend = [Tend;t(i)];   
 
+t2 = t;
+t = t(2:i);
+C = C(:,2:i);
+R = R(2:i);
+reactionScraperBatch;
 
-if vessel>=8 
+rxnContainer(vessel) = rxn;
+cContainer(vessel) = C;
+tContainer(vessel) = t;
+Rcontainer(vessel) = R;
+extentContainer(vessel) = extent;
+
+t = t2;
+if (vessel >= 8 && system ==0) || (vessel == 9 && system ==1);
+    t2 = t;
     % Identifies the reactor type for saving the file properly.
     if system ==0
         systemString = 'Batch';
@@ -126,9 +142,7 @@ if vessel>=8
     A = pi/4*Dt^2;
     C_O2_vec = smooth(C(14,2:i),15);
     C_CO2_vec = smooth(C(7,2:i),15);
-    t2 = t;
-    t = t(2:i);
-    save(fileName,'t','shiftDay','C_CO2_vec','C_O2_vec','Dt','A');
+    save(fileName,'t','shiftDay','C_CO2_vec','C_O2_vec','A','Dt','C','MAB_Produced','rxn','extent');
     t = t2;
 end   
 end

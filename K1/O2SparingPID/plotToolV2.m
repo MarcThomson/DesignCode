@@ -14,7 +14,7 @@ load('expData.mat')
 if Perfusion
     VCD = @(t)1;
 else
-    VCD = @(t)1-0.5259/(1+353.3*exp(-0.9381*t));
+    VCD = @(t)1-0.5259./(1+353.3*exp(-0.9381*t));
 end
 
 % indices for components

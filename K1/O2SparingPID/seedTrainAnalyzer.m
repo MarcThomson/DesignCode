@@ -14,14 +14,23 @@ r = beta(2);
 tau = log(2)/r*24; %doubling time in days
 
 
-if system == 1
+if system == 1 && writeFile
     fileName1 = 'initialConditionsPerfusion.mat';
     C0 = C(:,end);
     save(fileName1,'C0');
-elseif system == 0
-    fileName2 = 'initialConditionsBatch.mat';
+    
+    fileName2 = 'PerfusionSeedTrain.mat';
+    save(fileName2,'tau','Tend','rxnContainer','cContainer', 'tContainer', 'Rcontainer', 'extentContainer');
+    
+  
+elseif system == 0 && writeFile
+    fileName1 = 'initialConditionsBatch.mat';
     C0 = C(:,end);
-    save(fileName2,'C0');
+    save(fileName1,'C0');
+    
+    fileName2 = 'BatchSeedTrain.mat';
+    save(fileName2,'tau','Tend','rxnContainer','cContainer', 'tContainer', 'Rcontainer', 'extentContainer');
+    
 end
 
 

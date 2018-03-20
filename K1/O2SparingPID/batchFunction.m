@@ -1,10 +1,7 @@
-clear;close all;clc;
-%load('ObjFun.mat');
-%load('R2.mat')
-load('ParticleSwarm.mat')
-%guess
-parameters = x;
-%parameters  = log(x0);
+clear;close all;clc;                   % Clear out current variable list
+
+% Parameters guess
+load('finalParameters_v1.mat')
 %% Inputs %%
 tend = 10;
 cellType = 1;
@@ -14,12 +11,8 @@ h = 0.005;
 shiftDay = 3;
 Dt = 0.947; %m
 A = Dt^2/4*pi;
+writeFile = 1;
 %% Load variables from definitions
-
-parameters = exp(parameters);
-
-
-
 reversibleLogicals;
 internalLogicals;
 initialConditionsSeedTrain;
@@ -184,7 +177,9 @@ end
 
 reactionScraperBatch
 
-C_O2_vec = smooth(C(14,:),15);
-C_CO2_vec = smooth(C(7,:),15);
-fileName = 'Batch_Output.mat';
-save(fileName,'t','shiftDay','C_CO2_vec','C_O2_vec','A','Dt');
+if writeFile                                
+    C_O2_vec = smooth(C(14,:),15);
+    C_CO2_vec = smooth(C(7,:),15);
+    fileName = 'Batch_Output.mat';
+    save(fileName,'t','shiftDay','C_CO2_vec','C_O2_vec','A','Dt','C','MAB_Produced','rxn','extent');
+end
