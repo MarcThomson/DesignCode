@@ -1,5 +1,6 @@
 function [FO2, FCO2, Nrad, O2prop, CO2prop, dB] = ...
-    spargerV2(CL_O2,CL_CO2,airFrac,CO2Frac,Qgas,Dt,Nrad,t,shift,MinBubble,MaxBubble, ImpVesRatio )
+    spargerV2(CL_O2, CL_CO2, airFrac, CO2Frac, Qgas, Dt, Nrad, t,...
+              shift, MinBubble, MaxBubble, ImpVesRatio)
 % give the oxygen flux for the current sparger system
 % inputs:
 % CL_O2 = concentration of O2 in liquid phase, mM
@@ -100,8 +101,8 @@ PCO2 = Pmean*400e-6;%Total Pressure of CO2 in air, Pa
 CstarO2 = PO2/hO2;      % saturation concentation O2 in liquid, mol/m^3
 CstarCO2 = PCO2/hCO2;   % saturation concentration CO2 in liquid, mol/m^3
 
-FO2 = FO2 + kLaO2_head*(CstarO2-CL_O2);  %O2 flux, mM/s
-FCO2 = FCO2 + kLaCO2_head*(CstarCO2-CL_CO2);  %CO2 flux, mM/s
+FO2 = FO2 + kLaO2_head*(CstarO2-CL_O2);  % total O2 flux, mM/s
+FCO2 = FCO2 + kLaCO2_head*(CstarCO2-CL_CO2);  % total CO2 flux, mM/s
 
 
 CstarO2 = 1E5/hO2;    % O2 sat conc under pure O2 atmosphere mol/m^3 = mM

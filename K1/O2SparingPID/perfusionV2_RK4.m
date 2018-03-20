@@ -1,24 +1,20 @@
-clear;                   % Clear out current variable list
-%load('ObjFun.mat');     % Fits for all 47 parameters
-load('R2.mat')           % Fits (based on R2) for all 47 parameters
+clear;close all;clc;                   % Clear out current variable list
 
 % Parameters guess
-parameters = x;
-parameters = exp(parameters);
-%parameters  = log(x0);
+load('finalParameters_v1.mat')
 
 %% Inputs %%
 tend = 30;                                % Ending day of perfusion (days)
 cellType = 1;                             % Cell type
 shift = 0;                                % Initialize shift variable (bool)
 Perfusion = 1;                            % Type of reactor initialized
-h = 0.01;                                 % Step size for Runge Kutta 4 (days)
+h = 0.005;                                % Step size for Runge Kutta 4 (days)
 alpha = (1+19.2703)*(1-0.99975);          % Cell death parameter. A measure of cells killed in the filter.
 tau = 1;                                  % Reactor residence time (1 day)
 shiftDay = 6;                             % Day of temperature shift (days)
 Dt = (4*500E3/(3*pi))^(1/3)/100;          % Diameter of tank used in perf (m). Calculated based on volume and 3:1 D:h ratio.
 A = pi/4*Dt^2;                            % Area of tank base based on Dt.
-writeFile=0;                              % Should the solution be written to a file?
+writeFile = 1;                            % Should the solution be written to a file?
 %% Load variables from definitions
 reversibleLogicals;                       % Define reversible/irreversible reactions
 internalLogicals;                         % Define internal/external reactions
@@ -110,8 +106,8 @@ reactionScraperPerfusion
 % If the current state is to be written (writeFile=1), save outputs as
 % Perfusion_Output.mat
 if writeFile                                
-C_O2_vec = smooth(C(14,:),15);
-C_CO2_vec = smooth(C(7,:),15);
-fileName = 'Perfusion_Output.mat';
-save(fileName,'t','shiftDay','C_CO2_vec','C_O2_vec','A','Dt');
+    C_O2_vec = smooth(C(14,:),15);
+    C_CO2_vec = smooth(C(7,:),15);
+    fileName = 'Perfusion_Output.mat';
+    save(fileName,'t','shiftDay','C_CO2_vec','C_O2_vec','A','Dt','C','MAB_Produced','rxn','extent');
 end

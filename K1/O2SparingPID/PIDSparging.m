@@ -4,17 +4,19 @@
 
 % Inputs
 batchReactor  = 0; %1 for batch reactor, 0 otherwise
-CO2_0 = 10E-2; %percentage of initial feed that is CO2
-O2_0 = 40E-2; %percentage of initial feed that is O2
-ImpVesRatio = 4/9;   % ratio of impeller diameter to vessel diameter
+CO2_0 = 12E-2; %percentage of initial feed that is CO2
+O2_0 = 60E-2; %percentage of initial feed that is O2
+ImpVesRatio = 5/9;   % ratio of impeller diameter to vessel diameter
+MinBubble = 0.6e-2;  % minimum bubble diameter for deadband control, m
+MaxBubble = 0.7e-2;  % maximum bubble diameter for deadband control, m
 
 % Dataset:
 % load('Batch_Output.mat');
 % load('Perfusion_Output.mat');
 % load('Perfusion20.mat');
 % load('Perfusion100.mat');
- load('Batch20.mat');
-% load('Batch80.mat');
+% load('Batch20.mat');
+ load('Batch80.mat');
 % load('Batch400.mat');
 
 % PID Parameters
@@ -29,13 +31,12 @@ K = [2    200    0.00 ; %O2
      .05      5    0.00];%Flow
      %K1    K2   K3
 
-MinBubble = 0.6e-2;  % minimum bubble diameter for deadband control, m
-MaxBubble = 0.65e-2;  % maximum bubble diameter for deadband control, m
+
 
 %%
 % reset the initial concentrations to a reasonable level (otherwise they
 % might start negative due to the nature of the date files)
-C_O2_vec = C_O2_vec - C_O2_vec(1) + 0.4189*1.2; 
+C_O2_vec = C_O2_vec - C_O2_vec(1) + 0.4189; 
 C_CO2_vec = C_CO2_vec - C_CO2_vec(1) + 1.7481;
 
 
@@ -83,8 +84,8 @@ Nrad = zeros(length(t_new),1); %rotation speed of impellers, rad/s
 % Select some reasonable initial values 
 Nrad(1) = 1*2*pi; %60 rpm
 Qtotal(1) = 10e-3*A; % aprroximately the middle allowable flow rate
-QCO2(1) = 12E-2*Qtotal(1); % 6% of the initial flow is 
-QO2(1) = 0.6*Qtotal(1);
+QCO2(1) = CO2_0 *Qtotal(1); % 6% of the initial flow is 
+QO2(1) = O2_0*Qtotal(1);
 
 
 for i = 2 : length(t_new)

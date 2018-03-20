@@ -1,6 +1,7 @@
 clear;close all;clc;
 %load('ObjFun.mat');
-load('R2.mat')
+%load('R2.mat')
+load('ParticleSwarm.mat')
 %guess
 parameters = x;
 %parameters  = log(x0);
@@ -137,7 +138,7 @@ for i = 1:length(t)-1
        Feed(4) = 15.04; %ASP
        Feed(6) = 4.68; %CC
        Feed(8) = 444.4; %GLc
-       Feed(9) = 20; %GLN
+       Feed(9) = 6; %GLN
        Feed(10) = 6;% GLU
        Feed(11) = 6; %GLY
        Feed(15) = 45.16; %SER
