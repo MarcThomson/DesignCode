@@ -3,25 +3,31 @@
 
 
 % Inputs
-batchReactor  = 0; %1 for batch reactor, 0 otherwise
+batchReactor  = 1; %1 for batch reactor, 0 otherwise
 
 % Dataset:
-load('Batch_Output.mat');
+% load('Batch_Output.mat');
 % load('Perfusion_Output.mat');
-% load('Perfusion20.mat');
-% load('Perfusion100.mat');
+%load('Perfusion20.mat');
+ load('Perfusion100.mat');
 % load('Batch20.mat');
 % load('Batch80.mat');
 % load('Batch400.mat');
 
 % PID Parameters
-K = [2     100  0.01 ; %O2
-     2     75    0.01; %CO2   
-     0.3   .2    0.00];%Flow
+% K = [2    200    0.01 ; %O2
+%      10     1000   .0; %CO2   
+%      .05      5    0.00];%Flow
+%      %K1    K2   K3
+
+
+K = [2    200    0.00 ; %O2
+    10     1000   .0; %CO2   
+     .05      5    0.00];%Flow
      %K1    K2   K3
 
-MinBubble = 0.8e-2;  % minimum bubble diameter for deadband control, m
-MaxBubble = 1e-2;  % maximum bubble diameter for deadband control, m
+MinBubble = 0.6e-2;  % minimum bubble diameter for deadband control, m
+MaxBubble = 0.7e-2;  % maximum bubble diameter for deadband control, m
 
 %%
 % reset the initial concentrations to a reasonable level (otherwise they
@@ -30,7 +36,7 @@ C_O2_vec = C_O2_vec - C_O2_vec(1) + 0.4189*1.2;
 C_CO2_vec = C_CO2_vec - C_CO2_vec(1) + 1.7481;
 
 
-h1 = 10/24/60/60; %mass transfer time step
+h1 = 10/24/60/10; %mass transfer time step
 loopTime = 10/24/60; %PID loop step time 
 
 % initially, the temperature is 37 dC
@@ -156,7 +162,7 @@ for i = 2 : length(t_new)
    
     % PID 
     % compute errors
-    errorO2 = 0.5 - O2prop_vec(1:i);
+    errorO2 = 0.36 - O2prop_vec(1:i);
     errorCO2 = 0.07 - CO2prop_vec(1:i);
     % after the 2nd iteration, begin implementing PI
     if i > 2
@@ -179,7 +185,7 @@ for i = 2 : length(t_new)
     if mod(t_new(i),loopTime) < h/2        
         QO2(i) = QO2(1)*(1 + uO2);    
         QCO2(i) = QCO2(1)*(1 + uCO2);
-        Qtotal(i) = Qtotal(i-1)*(1 + uFlow);
+        Qtotal(i) = Qtotal(1)*(1 - uFlow);
         
         % Reset flow if flow is outside of acceptable bounds
         if Qtotal(i)/A > 18.1e-3
@@ -189,15 +195,15 @@ for i = 2 : length(t_new)
         end
        
         % if O2 flow is higher than the total flow minus CO2 flow, reset it
-        if QO2(i)>Qtotal(i)*(1-CO2Frac)
+        if QO2(i)>Qtotal(i)*0.95
             % if the O2 flow is too high, adjust the total flow to
             % compensate, but don't let it go beyond acceptable bounds
-            Qtotal(i) = QO2(i)/(1-CO2Frac);
+            Qtotal(i) = QO2(i)*0.95;
             if Qtotal(i)/A > 18.1e-3
                 Qtotal(i) = A*18.1e-3;
             end
             QO2(i) = Qtotal(i)*(1-CO2Frac);
-            QCO2(i) = CO2Frac * Qtotal(i);
+            %QCO2(i) = CO2Frac * Qtotal(i);
         end
         % if O2 concentration is lower than 0.2095, reset it
         if QO2(i) < 0.2095*(Qtotal(i)-QCO2(i))
@@ -209,7 +215,7 @@ for i = 2 : length(t_new)
                 Qtotal(i) = A*3.7e-3;
             end
             QO2(i) = Qtotal(i)*(1-CO2Frac);
-            QCO2(i) = CO2Frac * Qtotal(i);
+            %QCO2(i) = CO2Frac * Qtotal(i);
         end
         
         % if CO2 goes negative, force it up
@@ -247,3 +253,17 @@ figure(1);plot(t_new(1:i-1),100*O2prop_vec(1:i-1),'LineWidth',2);
 xlabel('time (days');ylabel('O_2 Saturation Percentage');drawnow
 figure(2);plot(t_new(1:i-1),100*CO2prop_vec(1:i-1),'LineWidth',2);
 xlabel('time (days');ylabel('CO_2 Saturation Percentage');drawnow
+
+% total flow 
+yO2 = QO2./Qtotal;
+yCO2 = QCO2./Qtotal;
+CO2Frac = (yCO2-400E-6)/(1-400E-6);
+airFrac = (1-yO2-CO2Frac)/(1-0.2095);
+
+%all in m^3
+CO2_total = trapz(t_new,Qtotal.*CO2Frac)*3600*24;
+air_total = trapz(t_new,Qtotal.*airFrac)*3600*24;
+O2_total = trapz(t_new,Qtotal.*(1-airFrac-CO2Frac))*3600*24;
+
+
+
