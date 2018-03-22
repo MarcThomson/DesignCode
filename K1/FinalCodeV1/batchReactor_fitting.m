@@ -1,4 +1,5 @@
-load('finalParameters_v1.mat')
+%load('finalParameters_v1.mat')
+load('NolanLeeParameters.mat')
 f_obj = batchFunction(parameters') 
 
 

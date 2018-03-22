@@ -272,12 +272,8 @@ CO2_total = trapz(t_new,Qtotal.*CO2Frac)*3600*24;
 air_total = trapz(t_new,Qtotal.*airFrac)*3600*24;
 O2_total = trapz(t_new,Qtotal.*(1-airFrac-CO2Frac))*3600*24;
 
-gradCO2 = Qtotal.*CO2Frac*3600*24./grad(t_new);
-gradAir = Qtotal.*airFrac*3600*24./grad(t_new);
-gradO2 = Qtotal.*(1-airFrac-CO2Frac)*3600*24./grad(t_new);
-
 % put the outputs into the format of the excel doc
 excelOutput = [batchReactor, MinBubble,MaxBubble,ImpVesRatio,CO2_0, O2_0,...
               K(1,:),K(2,:),K(3,:), O2_total,CO2_total,...
-              air_total,max(Nrad)/(2*pi)*60,max(gradO2),max(gradAir),max(gradO2)];
+              air_total,max(Nrad)/(2*pi)*60,max(grad(]
 

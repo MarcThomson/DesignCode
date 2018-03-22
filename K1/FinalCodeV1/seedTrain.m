@@ -3,14 +3,14 @@ clear;close all;clc;                   % Clear out current variable list
 load('finalParameters_v1.mat')
 %% Inputs %%
 critDensity = 10;
-system = 0;                         % 1 = perfusion, 0 = batch
+system = 1;                         % 1 = perfusion, 0 = batch
 tend = 10;                          % Defines the length of the seed train
 cellType = 1;                       % Identifies the cell type (1=A)
 shift = 0;                          % Initializes the temperature shift bool
 Perfusion = 0;                      % Identifies the type of reactor (batch)
 shiftDay = 100;                     % Day of the temperature shift
-h = 0.05;                           % Step size for Runge Kutta 4th order in days
-writeFile = 0;                      % Boolean to determine if an output file is written
+h = 0.005;                           % Step size for Runge Kutta 4th order in days
+writeFile = 1;                      % Boolean to determine if an output file is written
 plotExp = 0;                        % Boolean to determine if experimental data should be added to the plot
 %% initialize the set of vessels 
 % all vessel sizes in mL
@@ -136,7 +136,7 @@ extentContainer(vessel) = extent;
 t = t2;
 
 % if a vessel that requires a spargers, save the data
-if (vessel >= 8 && system ==0) || (vessel == 9 && system ==1);
+if (vessel >= 8 && system ==0) || (vessel >=8 && system ==1)
     t2 = t;
     t = t(2:i);
     % Identifies the reactor type for saving the file properly.
@@ -145,8 +145,11 @@ if (vessel >= 8 && system ==0) || (vessel == 9 && system ==1);
     elseif system ==1
         systemString = 'Perfusion';
     end
-    %
-    Volume = num2str(vesselSize(vessel)/1000);
+    if system == 1 && vessel == 8
+        Volume = num2str(vesselSize(vessel+1)/1000);
+    else
+        Volume = num2str(vesselSize(vessel)/1000);
+    end
     fileName = [systemString,Volume,'.mat'];  
     Dt = (4*vesselSize(vessel)/(3*pi))^(1/3)/100; %m
     A = pi/4*Dt^2; %m^2
