@@ -22,7 +22,7 @@ set(gca,'FontSize',20);
 
 % Plot log(total viable cells) vs time (should be linear)
 figure();clf;plot(t_total,log(VCD_total.*vesselSize_total),'LineWidth',2);
-xlabel('Total Time (days)');ylabel('MAB (kg)');
+xlabel('Total Time (days)');ylabel('ln(Viable Cells)');
 set(gca,'FontSize',20);
 
 

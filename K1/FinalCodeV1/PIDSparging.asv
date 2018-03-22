@@ -1,24 +1,25 @@
-clear;close all;clc
+clear;%close all;clc
 % Calculates the necesary O2, CO2, and air flow rates for a particular
 % process
 
 
 %% Input
 % Dataset:
- load('Batch_Output.mat');load('Batch_Output_PIDParameters.mat');
+% load('Batch_Output.mat');load('Batch_Output_PIDParameters.mat');
 % load('Perfusion_Output.mat');load('Perfusion_Output_PIDParameters.mat');
+% load('Perfusion20.mat');load('Perfusion20_PIDParameters.mat');
 % load('Perfusion100.mat');load('Perfusion100_PIDParameters.mat');
-% load('Batch20.mat');load('Batch20_PIDParameters.mat');
+ load('Batch20.mat');load('Batch20_PIDParameters.mat'); 
 % load('Batch80.mat'); load('Batch80_PIDParameters.mat');
 % load('Batch400.mat');load('Batch400_PIDParameters.mat');
 
 % Other inputs for manual tuning. Keep commented unless tuning
 % batchReactor  = 0; %1 for batch reactor, 0 otherwise
-%    CO2_0 = 8E-2; %percentage of initial feed that is CO2
-%    O2_0 = 45E-2; %percentage of initial feed that is O2
-% ImpVesRatio = 0.5;   % ratio of impeller diameter to vessel diameter
-% MinBubble = 0.6e-2;  % minimum bubble diameter for deadband control, m
- MaxBubble = 0.68e-2;  % maximum bubble diameter for deadband control, m
+%     CO2_0 = 8E-2; %percentage of initial feed that is CO2
+%     O2_0 = 45E-2; %percentage of initial feed that is O2
+%  ImpVesRatio = 0.45;   % ratio of impeller diameter to vessel diameter
+% % MinBubble = 0.6e-2;  % minimum bubble diameter for deadband control, m
+% % MaxBubble = 0.68e-2;  % maximum bubble diameter for deadband control, m
 % 
 % 
 % % PID Parameters
@@ -26,7 +27,10 @@ clear;close all;clc
 %         10     100       0; %CO2   
 %           0     0         0];%Flow
 % %       K1    K2        K3
-
+K(1,1) = 0;
+K(2,1)=0;
+K(2,2) = 1;
+K(1,2) = 1;
 
 %% calculations
 % reset the initial concentrations to a reasonable level (otherwise they
@@ -108,7 +112,7 @@ for i = 2 : length(t_new)
     spargerV2( C_O2_sparge(i-1) + C_O2_rxn(i-1),...
                C_CO2_sparge(i-1) + C_CO2_rxn(i-1),...
                airFrac,CO2Frac,Qtotal(i-1), Dt, Nrad(i-1), t_new(i-1),...
-               shift, MinBubble, MaxBubble, ImpVesRatio);
+               shift, MinBubble, MaxBubble, ImpVesRatio, NImpeller);
     FO2_1 = 24*3600*FO2_1; %convert from /s basis to /day
     FCO2_1 = 24*3600*FCO2_1; %convert from /s basis to /day
     
@@ -117,7 +121,7 @@ for i = 2 : length(t_new)
     spargerV2( C_O2_sparge(i-1) + FO2_1*h/2 + 1/2*(C_O2_rxn(i-1)+ C_O2_rxn(i))   ,...
                C_CO2_sparge(i-1) + FCO2_1*h/2 + 1/2*(C_CO2_rxn(i-1) + C_CO2_rxn(i)),...
                airFrac, CO2Frac, Qtotal(i-1), Dt, Nrad(i-1),...
-               t_new(i-1) + h/2, shift, MinBubble, MaxBubble, ImpVesRatio);
+               t_new(i-1) + h/2, shift, MinBubble, MaxBubble, ImpVesRatio, NImpeller);
     FO2_2 = 24*3600*FO2_2; %convert from /s basis to /day
     FCO2_2 = 24*3600*FCO2_2; %convert from /s basis to /day
     
@@ -126,7 +130,7 @@ for i = 2 : length(t_new)
     spargerV2( C_O2_sparge(i-1) + FO2_2*h/2 + 1/2*(C_O2_rxn(i-1) + C_O2_rxn(i)),...
                C_CO2_sparge(i-1)+ FCO2_2*h/2 + 1/2*(C_CO2_rxn(i-1) + C_CO2_rxn(i)),...
                     airFrac, CO2Frac, Qtotal(i-1), Dt, Nrad(i-1),...
-                    t_new(i-1) + h/2, shift, MinBubble, MaxBubble, ImpVesRatio);
+                    t_new(i-1) + h/2, shift, MinBubble, MaxBubble, ImpVesRatio, NImpeller);
     FO2_3 = 24*3600*FO2_3; %convert from /s basis to /day
     FCO2_3 = 24*3600*FCO2_3; %convert from /s basis to /day
     
@@ -135,7 +139,7 @@ for i = 2 : length(t_new)
     spargerV2(C_O2_sparge(i-1) + FO2_3*h + C_O2_rxn(i),...
               C_CO2_sparge(i-1) + FCO2_3*h + C_CO2_rxn(i)  ,...
                     airFrac, CO2Frac, Qtotal(i-1), Dt, Nrad(i-1),...
-                    t_new(i-1) + h, shift, MinBubble, MaxBubble, ImpVesRatio);
+                    t_new(i-1) + h, shift, MinBubble, MaxBubble, ImpVesRatio, NImpeller);
     FO2_4 = 24*3600*FO2_4; %convert from /s basis to /day
     FCO2_4 = 24*3600*FCO2_4; %convert from /s basis to /day
     
@@ -153,7 +157,7 @@ for i = 2 : length(t_new)
     spargerV2(C_O2_sparge(i) + C_O2_rxn(i),...
               C_CO2_sparge(i) + C_CO2_rxn(i),...
               airFrac, CO2Frac, Qtotal(i-1), Dt, Nrad(i-1), t_new(i), ...
-              shift, MinBubble, MaxBubble, ImpVesRatio);
+              shift, MinBubble, MaxBubble, ImpVesRatio, NImpeller);
     
     % add the saturation proportions to the vectors
     CO2prop_vec(i) = CO2prop;
@@ -268,12 +272,20 @@ CO2Frac = (yCO2-400E-6)/(1-400E-6);
 airFrac = (1-yO2-CO2Frac)/(1-0.2095);
 
 %all in m^3
-CO2_total = trapz(t_new,Qtotal.*CO2Frac)*3600*24;
-air_total = trapz(t_new,Qtotal.*airFrac)*3600*24;
-O2_total = trapz(t_new,Qtotal.*(1-airFrac-CO2Frac))*3600*24;
+
+%rate of flow, m^3/s
+CO2_flow = Qtotal.*CO2Frac;
+air_flow = Qtotal.*airFrac;
+O2_flow = Qtotal.*(1-airFrac-CO2Frac);
+
+% total flows, m^3
+CO2_total = trapz(t_new,CO2_flow )*3600*24;
+air_total = trapz(t_new,air_flow)*3600*24;
+O2_total = trapz(t_new,O2_flow)*3600*24;
+
 
 % put the outputs into the format of the excel doc
 excelOutput = [batchReactor, MinBubble,MaxBubble,ImpVesRatio,CO2_0, O2_0,...
-              K(1,:),K(2,:),K(3,:), O2_total,CO2_total,...
-              air_total,max(Nrad)/(2*pi)*60,max(grad(]
-
+              NImpeller, K(1,:),K(2,:),K(3,:), O2_total,CO2_total,...
+              air_total,max(O2_flow),max(CO2_flow),max(air_flow),...
+              max(Nrad)/(2*pi)*60]

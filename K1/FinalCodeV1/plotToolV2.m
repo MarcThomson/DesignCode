@@ -12,7 +12,7 @@ Titles=[{'BIOM'},{'ANTI'},{'GLUC'},{'LAC '},{'ALA '},{'ASN '},{'ASP '},...
 load('expData.mat')
 
 % if batch reactor, scale the BIOM to get the VCD
-if Perfusion
+if Perfusion || exist('vessel')
     VCD = @(t)1;
 else
     VCD = @(t)1-0.5259./(1+353.3*exp(-0.9381*t)); %emperical function

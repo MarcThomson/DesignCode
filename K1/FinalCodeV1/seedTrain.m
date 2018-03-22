@@ -3,7 +3,7 @@ clear;close all;clc;                   % Clear out current variable list
 load('finalParameters_v1.mat')
 %% Inputs %%
 critDensity = 10;
-system = 1;                         % 1 = perfusion, 0 = batch
+system = 0;                         % 1 = perfusion, 0 = batch
 tend = 10;                          % Defines the length of the seed train
 cellType = 1;                       % Identifies the cell type (1=A)
 shift = 0;                          % Initializes the temperature shift bool
@@ -82,16 +82,20 @@ for vessel = 2:length(vesselSize)
     % The line below performs the first step of Runge Kutta (4th order).
     % This calls the function instantRatesV2, which calculates reaction rates
     % at the current timestep.
-        [K1, R1,~,~,~] =  instantRatesV2(C(:,i),t(i),Perfusion,cellType, shift, R(i), parameters,shiftDay);
+        [K1, R1,~,~,~] =  instantRatesV2(C(:,i),t(i),Perfusion,cellType,...
+            shift, R(i), parameters,shiftDay);
         K1 = K1*h;
     % Second step of Runge Kutta
-        [K2, R2,~,~,~] = instantRatesV2(C(:,i)+K1/2, t(i) + h/2 ,Perfusion,cellType, shift, R1, parameters,shiftDay);
+        [K2, R2,~,~,~] = instantRatesV2(C(:,i)+K1/2, t(i) + h/2 ,....
+            Perfusion,cellType, shift, R1, parameters,shiftDay);
         K2 = K2*h;
     % Third step of Runge Kutta
-        [K3, R3,~,~,~] = instantRatesV2(C(:,i)+K2/2, t(i) + h/2 ,Perfusion,cellType, shift, R2, parameters,shiftDay);
+        [K3, R3,~,~,~] = instantRatesV2(C(:,i)+K2/2, t(i) + h/2 ,...
+        Perfusion,cellType, shift, R2, parameters,shiftDay);
         K3 = K3*h;
     % Fourth step of Runge Kutta
-        [K4, R4,~,~,~] = instantRatesV2(C(:,i)+K3, t(i) + h ,Perfusion,cellType, shift, R3, parameters, shiftDay);
+        [K4, R4,~,~,~] = instantRatesV2(C(:,i)+K3, t(i) + h ,...
+            Perfusion,cellType, shift, R3, parameters, shiftDay);
         K4 = K4*h;
     % The next line calculates the final reaction rate for each component
         rates = (K1+2*K2+2*K3+K4)/6;
@@ -101,10 +105,12 @@ for vessel = 2:length(vesselSize)
     
    % R is calculated at the new point with an additional iteration
    [~, R(i+1),v(:,i+1),objVec(i+1),exitVec(i+1)] =...
-       instantRatesV2(C(:,i+1), t(i) + h ,Perfusion,cellType, shift, Rtest, parameters, shiftDay);
+       instantRatesV2(C(:,i+1), t(i) + h ,Perfusion,cellType...
+       , shift, Rtest, parameters, shiftDay);
 
     % Viable cell density is updates based on cell concentration and an emperical functtion    
-        VCD(i+1) = C(5,i+1)/2.31 * (1-0.5259/(1+353.3*exp(-0.9381*t(i+1))));
+        VCD(i+1) = C(5,i+1)/2.31 *...
+            (1-0.5259/(1+353.3*exp(-0.9381*t(i+1))));
 
         i = i + 1;                  % Iteration
     end
@@ -145,14 +151,17 @@ if (vessel >= 8 && system ==0) || (vessel >=8 && system ==1)
     elseif system ==1
         systemString = 'Perfusion';
     end
-    if system == 1 && vessel == 8
-        Volume = num2str(vesselSize(vessel+1)/1000);
+    if system == 1 && vessel == 8   % deal with the 20L vessel in the 100 L bag
+        Dt = (4*vesselSize(vessel+1)/(3*pi))^(1/3)/100; %m
+        A = pi/4*Dt^2; %m^2
+        Volume = num2str(vesselSize(vessel)/1000);
     else
         Volume = num2str(vesselSize(vessel)/1000);
+        Dt = (4*vesselSize(vessel)/(3*pi))^(1/3)/100; %m
+        A = pi/4*Dt^2; %m^2
     end
     fileName = [systemString,Volume,'.mat'];  
-    Dt = (4*vesselSize(vessel)/(3*pi))^(1/3)/100; %m
-    A = pi/4*Dt^2; %m^2
+
     C_O2_vec = smooth(C(14,:),15); %smooth to erase numerical error
     C_CO2_vec = smooth(C(7,:),15);
     % save relevent data

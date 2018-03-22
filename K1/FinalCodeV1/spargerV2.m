@@ -1,6 +1,6 @@
 function [FO2, FCO2, Nrad, O2prop, CO2prop, dB] = ...
     spargerV2(CL_O2, CL_CO2, airFrac, CO2Frac, Qgas, Dt, Nrad, t,...
-              shift, MinBubble, MaxBubble, ImpVesRatio)
+              shift, MinBubble, MaxBubble, ImpVesRatio, NImpeller)
 % give the oxygen flux for the current sparger system
 % inputs:
 % CL_O2 = concentration of O2 in liquid phase, mM
@@ -14,6 +14,7 @@ function [FO2, FCO2, Nrad, O2prop, CO2prop, dB] = ...
 % Minbubble = minimum desired bubble size, m
 % Maxbubble = maximum desired bubble size, m
 % ImpVesRatio = ratio of impeller diameter to vessel diameter
+% NImpeller = number of impellers
 % outputs:
 % FO2 = O2 flux due to mass transfer, mM/s
 % FCO2 = CO2 flux due to mass transfer, mM/s
@@ -55,7 +56,11 @@ NP1 = 0.75; %impeller numbers, assuming A315
 NP2 = 0.75; %impeller numbers, assuming A315
 P01 = NP1*rhoL*Nrev^3*(impDiam)^5; %power input for nonaerated system, W
 P02 = NP2*rhoL*Nrev^3*(impDiam)^5; %power input for nonaerated system, W
-P0 = P01 + P02; %total power input for nonaerated system, W
+if NImpeller == 2
+    P0 = P01 + P02; %total power input for nonaerated system, W
+elseif NImpeller == 1
+    P0 = P01;
+end
 
 Pg = P0*(1-38.2*Qgas/A/sqrt(g*impDiam)); %actual power input, W
 PV = (Pg)/VR; %EDR, W/m^3
@@ -72,7 +77,11 @@ while dB<MinBubble || dB>MaxBubble
     
     P01 = NP1*rhoL*Nrev^3*(impDiam)^5; %power input for nonaerated system, W
     P02 = NP2*rhoL*Nrev^3*(impDiam)^5; %power input for nonaerated system, W
-    P0 = P01 + P02; %total power input for nonaerated system, W
+    if NImpeller == 2
+        P0 = P01 + P02; %total power input for nonaerated system, W
+    elseif NImpeller == 1
+        P0 = P01;
+    end
 
     Pg = P0*(1-38.2*Qgas/A/sqrt(g*impDiam)); %actual power input, W
     PV = (Pg)/VR; %EDR, W/m^3
