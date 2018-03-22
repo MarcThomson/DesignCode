@@ -55,16 +55,16 @@ I_negative = find(massChangeScaled < 0);
 rxn= '';
 
 % add components consumed to the reaction string
-for i = 1:length(I_negative)-1
-    rxn = [rxn,num2str(-massChangeScaled(I_negative(i))),' ',names{I_negative(i)},' + '];
+for i1 = 1:length(I_negative)-1
+    rxn = [rxn,num2str(-massChangeScaled(I_negative(i1))),' ',names{I_negative(i1)},' + '];
 end
 
 % add reaction arrow
 rxn = [rxn,num2str(-massChangeScaled(I_negative(end))),' ',names{I_negative(end)},' --> '];
 
 % add components being produced
-for i = 1:length(I_positive)-1
-    rxn = [rxn,num2str(massChangeScaled(I_positive(i))),' ',names{I_positive(i)},' + '];
+for i1 = 1:length(I_positive)-1
+    rxn = [rxn,num2str(massChangeScaled(I_positive(i1))),' ',names{I_positive(i1)},' + '];
 end
 
 % assume all leftover mass is water and add it to the reaction

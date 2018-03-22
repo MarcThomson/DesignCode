@@ -4,7 +4,7 @@ load('finalParameters_v1.mat')
 
 critDensity = 10;
 system = 0;                         % 1 = perfusion, 0 = batch
-writeFile = 0;
+
 
 if system == 0                      % Vessel sizes for the batch seed train
     vesselSize =  [1,4,15,60,250,1000,4E3,20E3,80E3,400E3];
@@ -24,6 +24,7 @@ shift = 0;                          % Initializes the temperature shift bool
 Perfusion = 0;                      % Identifies the type of reactor (batch)
 shiftDay = 100;                     % Day of the temperature shift
 h = 0.005;                          % Step size for Runge Kutta 4th order in days
+writeFile = 1;
 %% Load variables from definitions
 reversibleLogicals;                 % Loads logic for reversible/irreversible reactions
 internalLogicals;                   % Loads logic for internal/external components
@@ -129,6 +130,7 @@ extentContainer(vessel) = extent;
 t = t2;
 if (vessel >= 8 && system ==0) || (vessel == 9 && system ==1);
     t2 = t;
+    t = t(2:i);
     % Identifies the reactor type for saving the file properly.
     if system ==0
         systemString = 'Batch';
@@ -140,8 +142,8 @@ if (vessel >= 8 && system ==0) || (vessel == 9 && system ==1);
     fileName = [systemString,Volume,'.mat'];  
     Dt = (4*vesselSize(vessel)/(3*pi))^(1/3)/100; %m
     A = pi/4*Dt^2;
-    C_O2_vec = smooth(C(14,2:i),15);
-    C_CO2_vec = smooth(C(7,2:i),15);
+    C_O2_vec = smooth(C(14,:),15);
+    C_CO2_vec = smooth(C(7,:),15);
     save(fileName,'t','shiftDay','C_CO2_vec','C_O2_vec','A','Dt','C','MAB_Produced','rxn','extent');
     t = t2;
 end   

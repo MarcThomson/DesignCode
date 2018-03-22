@@ -1,0 +1,8 @@
+%% Inputs %%
+cellType = 1;   % Type 1=A, 0=B
+
+%% Load variables from definitions
+parameterDefinitions;
+reversibleLogicals;
+internalLogicals;
+load('stoichMatrix.mat')

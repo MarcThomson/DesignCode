@@ -71,10 +71,10 @@ for i = 1:length(t)-1
    end
   
    
-%   Ineg = find(C(:,i+1)<0);
+   Ineg = find(C(:,i+1)<0);
 %   C(Ineg,i+1) = 0;
   
-   if abs(R(i+1))>10 || C(8,i+1)<10
+if abs(R(i+1))>10 %|| length(Ineg)>0
        R(i+1) = 0;
        failed = 1;
        break
@@ -87,12 +87,27 @@ if failed ==1
 end
 
 load('expData.mat');
-plotToolV2;
 I = [1;2;3;4;5;6;8;9;10;11;12;13;15];
 f_obj = 0;
 for i = 1:length(I)
     C_pred = interp1(t,C(I(i),:),t_exp);
-    f_obj = f_obj + sum(((C_pred-C_exp(i,:))./C_exp(i,:)).^2);
+    f_obj = f_obj +sqrt( sum(((C_pred-C_exp(i,:))./C_exp(i,:)).^2) );
 end
 
+meanC = mean(mean(C_exp));
+SStotal = sum(sum((C_exp-meanC).^2));
 
+SSR = 0;
+for i = 1:length(I)
+    C_pred = interp1(t,C(I(i),:),t_exp);
+    SSR = SSR + sum((C_pred-C_exp(i,:)).^2);
+end
+
+R2 = 1-SSR/SStotal;
+n = length(C_exp(:));
+R2adj = 1- (((1-R2)*(n-1))/(n-47-1));
+f_obj  = 1 - R2adj;
+
+plotToolV2
+
+end

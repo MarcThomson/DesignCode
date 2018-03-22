@@ -5,7 +5,7 @@ function rates = rateLaws(...
     c_GLC_ext, c_GLN_ext, c_GLN_int, c_GLU_ext, c_GLU_int, c_GLY_ext, ...
     c_GLY_int, c_LAC_ext, c_LAC_int, c_MAL, c_NADH_cyto, c_NADH_mito, ...
     c_NH3_ext, c_NH3_int, c_O2_ext, c_O2_int, c_OXA, c_PYR, c_SER_ext, ...
-    c_SER_int, shift, R, cellType,parameters, t, shiftDay)
+    c_SER_int, shift, R, cellType,parameters)
 
 
 parameterDefinitions
@@ -14,12 +14,7 @@ parameterDefinitions
 % William Cordell
 % Rate laws provided by: Lee et al. 2012
 
-
-
  if shift==1
-     preMultiplier = 1-exp(-33.9400974951428*(t);
-     
-     
     TC_1=TC_1b;
     TC_3=TC_3b;
     TC_8=TC_8b;

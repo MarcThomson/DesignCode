@@ -1,36 +1,31 @@
+clear;%close all;clc
 % Calculates the necesary O2, CO2, and air flow rates for a particular
 % process
-
-
-% Inputs
-batchReactor  = 0; %1 for batch reactor, 0 otherwise
-CO2_0 = 12E-2; %percentage of initial feed that is CO2
-O2_0 = 60E-2; %percentage of initial feed that is O2
-ImpVesRatio = 5/9;   % ratio of impeller diameter to vessel diameter
-MinBubble = 0.6e-2;  % minimum bubble diameter for deadband control, m
-MaxBubble = 0.7e-2;  % maximum bubble diameter for deadband control, m
 
 % Dataset:
 % load('Batch_Output.mat');
 % load('Perfusion_Output.mat');
-% load('Perfusion20.mat');
 % load('Perfusion100.mat');
-% load('Batch20.mat');
- load('Batch80.mat');
+ load('Batch20.mat');
+% load('Batch80.mat');
 % load('Batch400.mat');
 
+% Inputs
+batchReactor  = 0; %1 for batch reactor, 0 otherwise
+CO2_0 = 12E-2; %percentage of initial feed that is CO2
+O2_0 = 70E-2; %percentage of initial feed that is O2
+ImpVesRatio = 0.5;   % ratio of impeller diameter to vessel diameter
+MinBubble = 0.6e-2;  % minimum bubble diameter for deadband control, m
+MaxBubble = 0.68e-2;  % maximum bubble diameter for deadband control, m
+
+
 % PID Parameters
-% K = [2    200    0.01 ; %O2
-%      10     1000   .0; %CO2   
-%      .05      5    0.00];%Flow
-%      %K1    K2   K3
 
 
-K = [2    200    0.00 ; %O2
-    10     1000   .0; %CO2   
-     .05      5    0.00];%Flow
+K = [2 500    0.000; %O2
+     20    500   0; %CO2   
+     0.0      0    0.00];%Flow
      %K1    K2   K3
-
 
 
 %%
@@ -186,7 +181,9 @@ for i = 2 : length(t_new)
     end
     
     % Only update the parameter if on a loop time
-    if mod(t_new(i),loopTime) < h/2        
+    if mod(t_new(i),loopTime) < h/2       
+        
+ 
         QO2(i) = QO2(1)*(1 + uO2);    
         QCO2(i) = QCO2(1)*(1 + uCO2);
         Qtotal(i) = Qtotal(1)*(1 - uFlow);
@@ -218,7 +215,7 @@ for i = 2 : length(t_new)
             if Qtotal(i)/A < 3.7e-3
                 Qtotal(i) = A*3.7e-3;
             end
-            QO2(i) = Qtotal(i)*(1-CO2Frac);
+            QO2(i) = 0.2095*Qtotal(i)*(1-CO2Frac);
             %QCO2(i) = CO2Frac * Qtotal(i);
         end
         

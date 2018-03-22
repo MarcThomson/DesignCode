@@ -1,0 +1,77 @@
+function componentRates = perfusionRates(C)
+%% Extra inputs
+cellType = 1;
+R_guess = 6.2;
+shift = 0;
+R_tol = 0.1;
+VCD = 0.8;
+
+%% Call other parameters
+parameterDefinitions;
+reversibleLogicals;
+initialConditions;
+internalLogicals;
+load('stoichMatrix.mat')
+
+numRxns=length(stoichMatrix(1,:));
+numComponents = length(stoichMatrix(:,1));
+
+
+%% Optimization Initialization
+tol = 1e-10;
+options = optimoptions('quadprog','OptimalityTolerance',tol,'MaxIterations',30000,'Algorithm','interior-point-convex','StepTolerance',1e-12);
+
+for j=flip(1:length(I_external))
+    %Aeq(I_external(j),:) = 0;
+    Aeq=[Aeq(1:I_external(j)-1,:);Aeq(I_external(j)+1:end,:)];
+end
+beq = zeros(length(Aeq(:,1)),1);
+
+A = zeros(numRxns,numRxns);
+for j=flip(1:numRxns)
+    if reversible(j)==1
+        A=[A(1:j-1,:);A(j+1:end,:)];
+    else
+        A(j,j) = -1;
+    end
+end
+b = zeros(length(A(:,1)),1);
+
+%% First Run
+y = [C; Rguess; shift; cellType];
+inputs = mat2cell(y,ones(1,length(y)),1);
+x0 = rateLaws(inputs{:});
+I = find(rates);
+H = zeros(numRxns,numRxns);
+f = zeros(numRxns,1);    
+for j = 1:length(I)
+       H(I(j),I(j)) = 2/x0(I(j))^2;
+       f(I(j)) = -2/x0(I(j)); 
+end
+v = quadprog(H,f,A,b,Aeq,beq);
+Rnew = (2*v(1)+0.64*v(16))/v(34);
+Rold = Rguess;
+
+%% Minimize R difference
+while abs(Rnew-Rold) < R_tol
+    Rold = Rnew;
+    y = [C; Rold; shift; cellType];
+    inputs = mat2cell(y,ones(1,length(y)),1);
+    x0 = rateLaws(inputs{:});
+    I = find(rates);
+    H = zeros(numRxns,numRxns);
+    f = zeros(numRxns,1);    
+    for j = 1:length(I)
+           H(I(j),I(j)) = 2/x0(I(j))^2;
+           f(I(j)) = -2/x0(I(j)); 
+    end
+    v = quadprog(H,f,A,b,Aeq,beq);    
+    Rnew = (2*v(1)+0.64*v(16))/v(34);
+end
+    
+    
+ 
+componentRates = stoichMatrix*v VCD/2.31*C(11)/1000; % Updating cell density
+
+    
+end

@@ -88,7 +88,7 @@ FO2 = kLaO2*(CstarO2-CL_O2);  %O2 flux, mM/s
 FCO2 = kLaCO2*(CstarCO2-CL_CO2);  %CO2 flux, mM/s
 
 eps = 22.4*(PV^0.24)*(Qgas^0.65)/100; % void fraction. CHECK
-a = 6*eps/dB; % bubble specific area m^2/m^3 
+a = 6*eps/(dB*(1-eps)); % bubble specific area m^2/m^3 
 ahead = A/VR; % head specific area m^2/m^3 
 
 kLaO2_head = ahead/a*kLaO2;
@@ -96,8 +96,8 @@ kLaCO2_head = ahead/a*kLaCO2;
 
 
 % Recompute Henry's law for headspace
-PO2 = Pmean*0.2095; %Total Pressure of O2 in air, Pa
-PCO2 = Pmean*400e-6;%Total Pressure of CO2 in air, Pa
+PO2 = 1E5*0.2095; %Total Pressure of O2 in air, Pa
+PCO2 = 1E5*400e-6;%Total Pressure of CO2 in air, Pa
 CstarO2 = PO2/hO2;      % saturation concentation O2 in liquid, mol/m^3
 CstarCO2 = PCO2/hCO2;   % saturation concentration CO2 in liquid, mol/m^3
 
@@ -113,3 +113,4 @@ O2prop = CL_O2/CstarO2;    % O2 saturation concentration
 
 Nrad = Nrev*2*pi; % new impeller speed, rad/s
 end
+     
