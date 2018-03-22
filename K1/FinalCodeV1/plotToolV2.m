@@ -6,7 +6,7 @@ figure();set(gca,'FontSize',20);
 
 % names of components as displayed on the graphs
 Titles=[{'BIOM'},{'ANTI'},{'GLUC'},{'LAC '},{'ALA '},{'ASN '},{'ASP '},...
-    {'C-C '},{'GLN '},{'GLY '},{'SER '},{'NH3 '},{'GLU '},{'VCD '},{'R  '}]
+    {'C-C '},{'GLN '},{'GLY '},{'SER '},{'NH3 '},{'GLU '},{'VCD '},{'R  '}];
 
 % load experimental data
 load('expData.mat')
