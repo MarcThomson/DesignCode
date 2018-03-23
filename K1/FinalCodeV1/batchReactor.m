@@ -22,7 +22,7 @@ h = 0.005;              % Stepsize in days
 shiftDay = 4    ;       % Identifies the day of the temperature shift
 Dt = (4*2000E3/(3*pi))^(1/3)/100;          % Diameter of tank used in batch (m). Calculated based on volume and 3:1 D:h ratio.
 A = Dt^2/4*pi;          % Tank cross sectional area in m^2
-writeFile = 1;          % Boolean to determine if the data is written to a file
+writeFile =0;          % Boolean to determine if the data is written to a file
 plotExp = 0;            % Boolean defining  whether or not the experimental data is to be plotted
 %% Load variables from definitions
 load('reversibleLogicals.mat');      % Loads reversible/irreversible logicals for metabolic reactions

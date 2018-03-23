@@ -10,7 +10,7 @@ shift = 0;                          % Initializes the temperature shift bool
 Perfusion = 0;                      % Identifies the type of reactor (batch)
 shiftDay = 100;                     % Day of the temperature shift
 h = 0.005;                           % Step size for Runge Kutta 4th order in days
-writeFile = 1;                      % Boolean to determine if an output file is written
+writeFile = 0;                      % Boolean to determine if an output file is written
 plotExp = 0;                        % Boolean to determine if experimental data should be added to the plot
 %% initialize the set of vessels 
 % all vessel sizes in mL
@@ -152,7 +152,11 @@ if (vessel >= 8 && system ==0) || (vessel >=8 && system ==1)
         systemString = 'Perfusion';
     end
     if system == 1 && vessel == 8   % deal with the 20L vessel in the 100 L bag
-        Dt = (4*vesselSize(vessel+1)/(3*pi))^(1/3)/100; %m
+        Dt = (4*vesselSize(vessel+1)/(1.5*pi))^(1/3)/100; %m
+        A = pi/4*Dt^2; %m^2
+        Volume = num2str(vesselSize(vessel)/1000);
+    elseif system == 1 && vessel == 9 %deal with the 100L vessel
+        Dt = (4*vesselSize(vessel)/(1.5*pi))^(1/3)/100; %m
         A = pi/4*Dt^2; %m^2
         Volume = num2str(vesselSize(vessel)/1000);
     else

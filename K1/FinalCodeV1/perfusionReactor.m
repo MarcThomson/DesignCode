@@ -12,7 +12,7 @@ h = 0.05;                                 % Step size for Runge Kutta 4 (days)
 cellDeath = 0.0050676;                    % Cell death parameter. A measure of the rate of cell death in the filter. Fit to match experimental observation
 tau = 1;                                  % Reactor residence time (1 day)
 shiftDay = 8;                             % Day of temperature shift (days)
-Dt = (4*500E3/(3*pi))^(1/3)/100;          % Diameter of tank used in perf (m). Calculated based on volume and 3:1 D:h ratio.
+Dt = (4*500E3/(1.5*pi))^(1/3)/100;          % Diameter of tank used in perf (m). Calculated based on volume and 3:1 D:h ratio.
 A = pi/4*Dt^2;                            % Area of tank base based on Dt.
 writeFile = 0;                            % Should the solution be written to a file?
 plotExp = 0;                              % Should experimental data be plotted? 1 = yes, 0 = no
