@@ -17,10 +17,10 @@ clear;%close all;clc
 % batchReactor  = 0; %1 for batch reactor, 0 otherwise
 %     CO2_0 = 8E-2; %percentage of initial feed that is CO2
 %     O2_0 = 45E-2; %percentage of initial feed that is O2
-%  ImpVesRatio = 0.45;   % ratio of impeller diameter to vessel diameter
-% % MinBubble = 0.6e-2;  % minimum bubble diameter for deadband control, m
-% % MaxBubble = 0.68e-2;  % maximum bubble diameter for deadband control, m
-% 
+%   ImpVesRatio = 0.33;   % ratio of impeller diameter to vessel diameter
+%  MinBubble = 0.69e-2;  % minimum bubble diameter for deadband control, m
+%  MaxBubble = 0.7e-2;  % maximum bubble diameter for deadband control, m
+% NImpeller = 1;
 % 
 % % PID Parameters
 %  K = [  1     50       0; %O2
