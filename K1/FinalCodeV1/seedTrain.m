@@ -1,16 +1,16 @@
-clear;close all;clc;                   % Clear out current variable list
+    clear;close all;clc;                   % Clear out current variable list
 % load the optimized parameters
 load('finalParameters_v1.mat')
 %% Inputs %%
 critDensity = 10;
-system = 0;                         % 1 = perfusion, 0 = batch
+system = 1;                         % 1 = perfusion, 0 = batch
 tend = 10;                          % Defines the length of the seed train
 cellType = 1;                       % Identifies the cell type (1=A)
 shift = 0;                          % Initializes the temperature shift bool
 Perfusion = 0;                      % Identifies the type of reactor (batch)
 shiftDay = 100;                     % Day of the temperature shift
 h = 0.005;                           % Step size for Runge Kutta 4th order in days
-writeFile = 0;                      % Boolean to determine if an output file is written
+writeFile = 1;                      % Boolean to determine if an output file is written
 plotExp = 0;                        % Boolean to determine if experimental data should be added to the plot
 %% initialize the set of vessels 
 % all vessel sizes in mL
@@ -154,22 +154,27 @@ if (vessel >= 8 && system ==0) || (vessel >=8 && system ==1)
     if system == 1 && vessel == 8   % deal with the 20L vessel in the 100 L bag
         Dt = (4*vesselSize(vessel+1)/(1.5*pi))^(1/3)/100; %m
         A = pi/4*Dt^2; %m^2
+        H = 1.5*Dt*0.2;
         Volume = num2str(vesselSize(vessel)/1000);
     elseif system == 1 && vessel == 9 %deal with the 100L vessel
         Dt = (4*vesselSize(vessel)/(1.5*pi))^(1/3)/100; %m
         A = pi/4*Dt^2; %m^2
         Volume = num2str(vesselSize(vessel)/1000);
+        H = 1.5*Dt;
     else
         Volume = num2str(vesselSize(vessel)/1000);
         Dt = (4*vesselSize(vessel)/(3*pi))^(1/3)/100; %m
         A = pi/4*Dt^2; %m^2
+        H = 3*Dt;
     end
     fileName = [systemString,Volume,'.mat'];  
-
+    
+    C_VCD_vec = (1-0.5259./(1+353.3*exp(-0.9381*t)))'.*smooth(C(5,:),15)/2.31;
+    
     C_O2_vec = smooth(C(14,:),15); %smooth to erase numerical error
     C_CO2_vec = smooth(C(7,:),15);
     % save relevent data
-    save(fileName,'t','shiftDay','C_CO2_vec','C_O2_vec','A','Dt','C',...
+    save(fileName,'t','shiftDay','C_VCD_vec','C_CO2_vec','C_O2_vec','A','Dt','H','C',...
         'MAB_Produced','rxn','extent');
     t = t2;
 end   

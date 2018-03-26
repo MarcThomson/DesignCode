@@ -32,7 +32,7 @@ names ={
 I_unity = 8;
  
 % Volume of prefusion reactor
-Volume = 3*Dt*A*1000; %L
+Volume = 1.5*Dt*A*1000; %L
 
 % compute the difference between the mass input and output for each
 % component in mmol
