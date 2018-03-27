@@ -92,6 +92,11 @@ function derivatives = dydt(t,y,t_new,Qdot,shiftDay, flowJacket,volumeJacket, T_
     
     % put them into derivatives
     derivatives = zeros(2,1);
-    derivatives(1) = 1/MCpTank * (-Qtherm_t - Qtransfer);
+    if t_new(end) == 30 %perfusion derivative
+        V_L = 1000*V;
+        derivatives(1) = 1/MCpTank * (-Qtherm_t - Qtransfer + V_L*Cp*(37 - y(1))   );
+    else
+        derivatives(1) = 1/MCpTank * (-Qtherm_t - Qtransfer);
+    end
     derivatives(2) = 1/MCpShell*(Qtransfer + flowJacket*Cp*TFeed - flowJacket*Cp*y(2));
 end
