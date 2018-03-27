@@ -6,12 +6,12 @@ clear;close all;clc
 %% Input
 % Dataset:
 % load('Batch_Output.mat');load('Batch_Output_PIDParameters.mat');
- load('Perfusion_Output.mat');load('Perfusion_Output_PIDParameters.mat');
+% load('Perfusion_Output.mat');load('Perfusion_Output_PIDParameters.mat');
 % load('Perfusion20.mat');load('Perfusion20_PIDParameters.mat');
 % load('Perfusion100.mat');load('Perfusion100_PIDParameters.mat');
 % load('Batch20.mat');load('Batch20_PIDParameters.mat'); 
 % load('Batch80.mat'); load('Batch80_PIDParameters.mat');
-%  load('Batch400.mat');load('Batch400_PIDParameters.mat');
+ load('Batch400.mat');load('Batch400_PIDParameters.mat');
 
 % Other inputs for manual tuning. Keep commented unless tuning
 % batchReactor  = 0; %1 for batch reactor, 0 otherwise
@@ -215,14 +215,14 @@ for i = 2 : length(t_new)
         end
        
         % if O2 flow is higher than the total flow minus CO2 flow, reset it
-        if flowO2(i)>flowTotal(i)*0.95 
+        if flowO2(i)>flowTotal(i)*(1-CO2Frac)*0.99
             % if the O2 flow is too high, adjust the total flow to
             % compensate, but don't let it go beyond acceptable bounds
-            flowTotal(i) = flowO2(i)/(1-CO2Frac)/0.95;
+            flowTotal(i) = flowO2(i)/(1-CO2Frac)/0.99;
             if flowTotal(i)/A > 18.1e-3
                 flowTotal(i) = A*18.1e-3;
             end
-            flowO2(i) = flowTotal(i)*(1-CO2Frac)*0.95;
+            flowO2(i) = flowTotal(i)*(1-CO2Frac)*0.99;
             %QCO2(i) = CO2Frac * Qtotal(i);
         end
         % if O2 concentration is lower than 0.2095, reset it
@@ -313,7 +313,9 @@ heatTransferAnalysis
 % put the outputs into the format of the excel doc
 excelOutput = [batchReactor, MinBubble,MaxBubble,ImpVesRatio,CO2_0, ...
               O2_0,NImpeller, K(1,:),K(2,:),K(3,:), O2_total,CO2_total,...
-              air_total,max(O2_flow),max(CO2_flow), max(air_flow),...
+              air_total,...
+              min(O2_flow),min(CO2_flow), min(air_flow),...
+              max(O2_flow),max(CO2_flow), max(air_flow),...
               max(Nrad)/(2*pi)*60, min(lambda)]
           
 excelOutputHT = [T_beforeShift, T_afterShift,flowJacket,volumeJacket,...
