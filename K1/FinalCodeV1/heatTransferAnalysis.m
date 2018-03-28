@@ -2,10 +2,10 @@
 
 U = 350; % heat transfer coefficient (themopedia) W/mK
 V = H*A; %Tank volume, m^3
-AShell = A + Dt*pi*H; %area of contact  with the jacket, m^2
+AShell = (A + Dt*pi*H)/1.5612; %area of contact  with the jacket, m^2
 
 
-deriv_ode = @(t,y)dydt(t,y,t_new,Qdot,shiftDay, flowJacket,volumeJacket, T_beforeShift,T_afterShift, U, AShell, V, batchReactor);
+deriv_ode = @(t,y)dydt(t,y,t_new,Qdot,shiftDay, flowJacket,volumeJacket, T_beforeShift,T_afterShift, U, AShell, V,H,Dt batchReactor);
 tHTRange = [0 t_new(end)]; 
 % Initialize both at 37 dC
 y0 = [37;37];
@@ -55,7 +55,7 @@ totalDuty = trapz(tHT,Qtransfer); % J
 
 
 % derivative for ODE45
-function derivatives = dydt(t,y,t_new,Qdot,shiftDay, flowJacket,volumeJacket, T_beforeShift,T_afterShift, U, AShell, V, batchReactor)
+function derivatives = dydt(t,y,t_new,Qdot,shiftDay, flowJacket,volumeJacket, T_beforeShift,T_afterShift, U, AShell, V,H,Dt, batchReactor)
     % deal with the variable Volume in the batch reactor
     if batchReactor
         Nfeeds = 0;
@@ -66,7 +66,9 @@ function derivatives = dydt(t,y,t_new,Qdot,shiftDay, flowJacket,volumeJacket, T_
             end
         end
         V = V*(0.79+0.03*Nfeeds);
-        AShell = AShell*(0.79+0.03*Nfeeds);
+        H = H*(0.79+0.03*Nfeeds);
+        A = pi*Dt^2/4;
+        AShell = (A + Dt*pi*H)/2.7622;
     end
     
     % call water properties, scale by the size of the reactor
