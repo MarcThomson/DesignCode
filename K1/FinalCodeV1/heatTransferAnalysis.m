@@ -5,7 +5,7 @@ V = H*A; %Tank volume, m^3
 AShell = (A + Dt*pi*H)/1.5612; %area of contact  with the jacket, m^2
 
 
-deriv_ode = @(t,y)dydt(t,y,t_new,Qdot,shiftDay, flowJacket,volumeJacket, T_beforeShift,T_afterShift, U, AShell, V,H,Dt batchReactor);
+deriv_ode = @(t,y)dydt(t,y,t_new,Qdot,shiftDay, flowJacket,volumeJacket, T_beforeShift,T_afterShift, U, AShell, V,H,Dt, batchReactor);
 tHTRange = [0 t_new(end)]; 
 % Initialize both at 37 dC
 y0 = [37;37];
