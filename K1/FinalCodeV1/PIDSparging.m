@@ -280,6 +280,13 @@ xlabel('Time (days)');ylabel('O_2 Saturation Percentage');set(gca,'FontSize',20)
 figure(2);plot(t_new(1:i-1),100*CO2prop_vec(1:i-1),'LineWidth',2);
 xlabel('Time (days)');ylabel('CO_2 Saturation Percentage');set(gca,'FontSize',20);
 drawnow
+
+%scale flow by pressure
+Pfactor = (1E5 + H*1000*9.8/2)/1E5;
+flowO2 = Pfactor*flowO2;
+flowCO2 = Pfactor*flowCO2;
+flowTotal = Pfactor*flowTotal;
+
 % total flow 
 yO2 = flowO2./flowTotal;
 yCO2 = flowCO2./flowTotal;
