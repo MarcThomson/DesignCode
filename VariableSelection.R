@@ -1,0 +1,2 @@
+MyData <- read.csv(file="C/Users/Marc Thomson/Documents/School Docs\College/Senior Year/Second Semester/Design/DesignCode/K1/stoicData.csv", header=TRUE, sep=",")
+regsubsets(Grad.Rate~.,data=College,nvmax=12)

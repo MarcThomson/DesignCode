@@ -1,6 +1,5 @@
 function [FO2, FCO2, Nrad, O2prop, CO2prop, dB] = ...
-    spargerV2(CL_O2, CL_CO2, airFrac, CO2Frac, Qgas, Dt, Nrad, t,...
-              shift, MinBubble, MaxBubble, ImpVesRatio, NImpeller)
+    spargerV2(CL_O2,CL_CO2,airFrac,CO2Frac,Qgas,Dt,Nrad,t,shift)
 % give the oxygen flux for the current sparger system
 % inputs:
 % CL_O2 = concentration of O2 in liquid phase, mM
@@ -11,10 +10,6 @@ function [FO2, FCO2, Nrad, O2prop, CO2prop, dB] = ...
 % Dt = diameter of tank, m
 % Nrad = initial speed of impellers, rad/s
 % t = current time, day
-% Minbubble = minimum desired bubble size, m
-% Maxbubble = maximum desired bubble size, m
-% ImpVesRatio = ratio of impeller diameter to vessel diameter
-% NImpeller = number of impellers
 % outputs:
 % FO2 = O2 flux due to mass transfer, mM/s
 % FCO2 = CO2 flux due to mass transfer, mM/s
@@ -23,6 +18,10 @@ function [FO2, FCO2, Nrad, O2prop, CO2prop, dB] = ...
 % CO2prop = current CO2 saturation percentage
 % dB = current mean bubble diameter, m
 
+% other inputs
+ImpVesRatio = 3/9;   % ratio of impeller diameter to vessel diameter
+MinBubble = .5e-2;  % minimum bubble diameter for deadband control, m
+MaxBubble = .6e-2;  % maximum bubble diameter for deadband control, m
 if shift 
     T = 31; % temperature, celsius
 else
@@ -56,11 +55,7 @@ NP1 = 0.75; %impeller numbers, assuming A315
 NP2 = 0.75; %impeller numbers, assuming A315
 P01 = NP1*rhoL*Nrev^3*(impDiam)^5; %power input for nonaerated system, W
 P02 = NP2*rhoL*Nrev^3*(impDiam)^5; %power input for nonaerated system, W
-if NImpeller == 2
-    P0 = P01 + P02; %total power input for nonaerated system, W
-elseif NImpeller == 1
-    P0 = P01;
-end
+P0 = P01 + P02; %total power input for nonaerated system, W
 
 Pg = P0*(1-38.2*Qgas/A/sqrt(g*impDiam)); %actual power input, W
 PV = (Pg)/VR; %EDR, W/m^3
@@ -77,11 +72,7 @@ while dB<MinBubble || dB>MaxBubble
     
     P01 = NP1*rhoL*Nrev^3*(impDiam)^5; %power input for nonaerated system, W
     P02 = NP2*rhoL*Nrev^3*(impDiam)^5; %power input for nonaerated system, W
-    if NImpeller == 2
-        P0 = P01 + P02; %total power input for nonaerated system, W
-    elseif NImpeller == 1
-        P0 = P01;
-    end
+    P0 = P01 + P02; %total power input for nonaerated system, W
 
     Pg = P0*(1-38.2*Qgas/A/sqrt(g*impDiam)); %actual power input, W
     PV = (Pg)/VR; %EDR, W/m^3
@@ -96,23 +87,6 @@ kLaCO2 = 0.92*kLaO2; % kLa for CO2, Hz
 FO2 = kLaO2*(CstarO2-CL_O2);  %O2 flux, mM/s
 FCO2 = kLaCO2*(CstarCO2-CL_CO2);  %CO2 flux, mM/s
 
-eps = 22.4*(PV^0.24)*(Qgas^0.65)/100; % void fraction. CHECK
-a = 6*eps/(dB*(1-eps)); % bubble specific area m^2/m^3 
-ahead = A/VR; % head specific area m^2/m^3 
-
-kLaO2_head = ahead/a*kLaO2;     %find kLa for headspace, Hz
-kLaCO2_head = ahead/a*kLaCO2;   %find kLa for headspace, Hz
-
-
-% Recompute Henry's law for headspace
-PO2 = 1E5*0.2095; %Total Pressure of O2 in air, Pa
-PCO2 = 1E5*400e-6;%Total Pressure of CO2 in air, Pa
-CstarO2 = PO2/hO2;      % saturation concentation O2 in liquid, mol/m^3
-CstarCO2 = PCO2/hCO2;   % saturation concentration CO2 in liquid, mol/m^3
-
-FO2 = FO2 + kLaO2_head*(CstarO2-CL_O2);  % total O2 flux, mM/s
-FCO2 = FCO2 + kLaCO2_head*(CstarCO2-CL_CO2);  % total CO2 flux, mM/s
-
 
 CstarO2 = 1E5/hO2;    % O2 sat conc under pure O2 atmosphere mol/m^3 = mM
 CstarCO2 = 1E5/hCO2;  % CO2 sat conc under pure CO2 atmosphere mol/m^3 = mM
@@ -122,4 +96,3 @@ O2prop = CL_O2/CstarO2;    % O2 saturation concentration
 
 Nrad = Nrev*2*pi; % new impeller speed, rad/s
 end
-     
