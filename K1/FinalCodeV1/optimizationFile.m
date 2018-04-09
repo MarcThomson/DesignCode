@@ -12,7 +12,7 @@ lb = x0 - log(3);
 ub = x0 + log(3);   
 
 % use multiple cores on the supercomputer
-parpool(22)
+parpool(2)
 
 % call the modified batch script
 fun = @(x)batchFunction(x,0);

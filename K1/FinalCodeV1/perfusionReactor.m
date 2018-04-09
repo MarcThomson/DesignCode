@@ -8,13 +8,13 @@ tend = 30;                                % Ending day of perfusion (days)
 cellType = 1;                             % Cell type
 shift = 0;                                % Initialize shift variable (bool)
 Perfusion = 1;                            % Type of reactor initialized
-h = 0.005;                                 % Step size for Runge Kutta 4 (days)
+h = 0.01;                                 % Step size for Runge Kutta 4 (days)
 cellDeath = 0.0050676;                    % Cell death parameter. A measure of the rate of cell death in the filter. Fit to match experimental observation
 tau = 1;                                  % Reactor residence time (1 day)
 shiftDay = 6;                             % Day of temperature shift (days)
 Dt = (4*500E3/(1.5*pi))^(1/3)/100;          % Diameter of tank used in perf (m). Calculated based on volume and 3:1 D:h ratio.
 A = pi/4*Dt^2;                            % Area of tank base based on Dt.
-writeFile = 1;                            % Should the solution be written to a file?
+writeFile = 0;                            % Should the solution be written to a file?
 plotExp = 0;                              % Should experimental data be plotted? 1 = yes, 0 = no
 %% Load variables from definitions
 load('reversibleLogicals.mat');                 % Define reversible/irreversible reactions
@@ -113,7 +113,8 @@ xlabel('Time (days)');ylabel('Cell Viability (%)');
 set(gca,'FontSize',20);
 
 
-plotToolV2                                   % Plot all relevant concentration profiles
+%plotToolV2                                   % Plot all relevant concentration profiles
+plotToolV2_BW;
 reactionAnalyzerPerfusion                    % Analyzes the output
 
 % If the current state is to be written (writeFile = 1), save outputs as

@@ -6,12 +6,12 @@ clear;close all;clc
 %% Input
 % Dataset:
 % load('Batch_Output.mat');load('Batch_Output_PIDParameters.mat');
-% load('Perfusion_Output.mat');load('Perfusion_Output_PIDParameters.mat');
+ load('Perfusion_Output.mat');load('Perfusion_Output_PIDParameters.mat');
 % load('Perfusion20.mat');load('Perfusion20_PIDParameters.mat');
 % load('Perfusion100.mat');load('Perfusion100_PIDParameters.mat');
 % load('Batch20.mat');load('Batch20_PIDParameters.mat'); 
 % load('Batch80.mat'); load('Batch80_PIDParameters.mat');
- load('Batch400.mat');load('Batch400_PIDParameters.mat');
+% load('Batch400.mat');load('Batch400_PIDParameters.mat');
 
 % Other inputs for manual tuning. Keep commented unless tuning
 % batchReactor  = 0; %1 for batch reactor, 0 otherwise

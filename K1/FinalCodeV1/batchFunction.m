@@ -108,7 +108,7 @@ if failed ==1
 end
 
 if plotOn
-    plotToolV2;
+    plotToolV2_BW;
 end
 
 % compute the objective function (R^2, adj)
