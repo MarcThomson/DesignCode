@@ -1,6 +1,6 @@
 # Bioreactor Writeup Outline
 * Brief introduction
-* CHO metabolic model
+m* CHO metabolic model
 	* Reaction set
 	* Kinetic rates
 	* MFB to get all rates
@@ -10,19 +10,19 @@
 * Issues with model
 	* Poor numerical method
 	 	* R not matching with lower step size
-	* Refitting the parameters
-	 	* Our multiple objective functions
-	 	* Our multiple fitting methods (particle swarm, simulated annealing, and pattern search)
-	 	* Final methods: minimize SSR with particle swarm to get approximate global min, then pattern search
-		* Comment on agreement & error
-* New parameters, batch output
-	* Overall reaction, production, graphs, etc
+ed	* Refitting the parameters
+ed	 	* Our multiple objective functions
+ed	 	* Our multiple fitting methods (particle swarm, simulated annealing, and pattern search)
+ed	 	* Final methods: minimize SSR with particle swarm to get approximate global min, then pattern search
+ed		* Comment on agreement & error
+ed* New parameters, batch output
+ed	* Overall reaction, production, graphs, etc
 * Generalizations of the model
-	* Adaptation for perfusion
+m	* Adaptation for perfusion
 		* Overall reaction, production, graphs, etc
-	* Adaptation for the seed train
-		* Overall reaction, production, graphs, etc 
-* O2/CO2 systems
+ed	* Adaptation for the seed train
+ed		* Overall reaction, production, graphs, etc 
+m* O2/CO2 systems
 	* Reactor specifications
 	 	* Sparger type, diameters, heights, impellers, etc
 	* Model for bubble properties
@@ -33,10 +33,10 @@
 			* valve specifications
 	 	* Outputs, gas flow rates required
 		* Impeller control system, eddy size
-* Heat transfer
-	* Heat transfer model
-		* bubble transfer, jacker transfer, cell heat generation
-	* Model parameters for each vessel
-	* outputs (utility requirements, min/max temperatures in each vessel)
+ed* Heat transfer
+ed	* Heat transfer model
+ed		* bubble transfer, jacker transfer, cell heat generation
+ed	* Model parameters for each vessel
+ed	* outputs (utility requirements, min/max temperatures in each vessel)
 * Summary and conclusions (brief)
 * Summary of Assumptions
